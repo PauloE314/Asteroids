@@ -1,0 +1,99 @@
+:root {
+    --retro-strong-font: "Press Start 2P", serif;
+    --retro-light-font: "VT323", serif;
+    --default-font: "Roboto", sans-serif;
+    --dark: rgb(8, 8, 8);
+    --white: rgba(255, 255, 255);
+    --light: rgba(200, 200, 200);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--default-font);
+    border: none;
+    outline: none;
+    text-decoration: none;
+    list-style: none;
+}
+
+body,
+html {
+    background-color: var(--dark);
+    color: var(--white);
+}
+
+/* Common classes */
+.title {
+    font-family: var(--retro-strong-font);
+    font-size: 5rem;
+    padding: 5rem 0;
+}
+
+.btn {
+    background-color: var(--dark);
+    font-family: var(--retro-strong-font);
+    color: var(--light);
+    cursor: pointer;
+    animation: ABlink 2s infinite;
+}
+.btn:hover {
+    animation: none !important;
+    color: var(--white);
+}
+
+/* Specific style */
+#page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    /* min-width: 400px; */
+}
+main {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    margin-bottom: 5rem;
+    background-color: #bbbbbb;
+}
+#play {
+    font-size: 2rem;
+    margin-top: 3rem;
+}
+main #cv {
+    border: 2px solid white;
+    box-sizing: border-box;
+}
+
+/* In game styles */
+#page.in-game main {
+    display: flex;
+}
+#page.in-game #play {
+    display: none;
+}
+#page.in-game .title {
+    font-size: 3rem;
+}
+
+/* Animations */
+@keyframes ABlink {
+    0% {
+        opacity: 1;
+    }
+    35% {
+        opacity: 0;
+    }
+    65% {
+        opacity: 0;
+    }
+    70% {
+        opacity: 1;
+    }
+}
