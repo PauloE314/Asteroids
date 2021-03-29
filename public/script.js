@@ -5,9 +5,13 @@ const HTMLPlayButton = document.getElementById("play");
 
 HTMLPlayButton.onclick = () => {
     HTMLPage.classList.add("in-game");
-    runGame().then(() => {
-        HTMLPage.classList.remove("in-game");
-    });
+    runGame()
+        .then(() => {
+            HTMLPage.classList.remove("in-game");
+        })
+        .catch(() => {
+            HTMLPage.classList.remove("in-game");
+        });
 };
 
-HTMLPlayButton.click();
+// HTMLPlayButton.click();

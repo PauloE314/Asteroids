@@ -60,7 +60,6 @@ main {
     width: 100%;
     flex: 1;
     margin-bottom: 5rem;
-    background-color: #bbbbbb;
 }
 #play {
     font-size: 2rem;
@@ -84,13 +83,13 @@ main #cv {
 
 /* Animations */
 @keyframes ABlink {
-    0% {
+    30% {
         opacity: 1;
     }
-    35% {
+    31% {
         opacity: 0;
     }
-    65% {
+    69% {
         opacity: 0;
     }
     70% {

@@ -1,4 +1,5 @@
 import Game from "./core/Game.js";
+import validator from "./core/Validator.js";
 
 let game;
 
@@ -8,13 +9,25 @@ let game;
 export default function runGame() {
     return new Promise((resolve, reject) => {
         if (!game) {
-            game = new Game();
-            game.init();
-            game.onEnd = () => {
-                game = null;
-                resolve();
-            };
-            game.run();
+            try {
+                // Asserts game settings
+                validator.assertValid();
+
+                // Creates game instance
+                game = new Game();
+                game.init();
+                game.onEnd = () => {
+                    game = null;
+                    resolve();
+                };
+
+                // Runs application
+                game.run();
+
+                // Catches game errors
+            } catch (error) {
+                reject(error);
+            }
         } else {
             reject();
         }
