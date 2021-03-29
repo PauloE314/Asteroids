@@ -1,5 +1,6 @@
 import Game from "./core/Game.js";
 import validator from "./core/Validator.js";
+import GameError, { errCodes } from "./core/Errors.js";
 
 let game;
 
@@ -7,7 +8,7 @@ let game;
  * Application's entry point
  */
 export default function runGame() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (!game) {
             try {
                 // Asserts game settings
@@ -15,7 +16,8 @@ export default function runGame() {
 
                 // Creates game instance
                 game = new Game();
-                game.init();
+                await game.init();
+
                 game.onEnd = () => {
                     game = null;
                     resolve();
@@ -29,7 +31,7 @@ export default function runGame() {
                 reject(error);
             }
         } else {
-            reject();
+            reject(new GameError(errCodes.inGameError));
         }
     });
 }
