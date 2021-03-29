@@ -36,6 +36,8 @@ export default class Game {
 
         this.state.entities = [this.player];
         this.state.time = ((Date.now() - this.start) / 1000).toFixed(0);
+
+        this.state.entities.forEach((e) => e.update(dt));
         this.renderer.renderState(this.state);
 
         /*

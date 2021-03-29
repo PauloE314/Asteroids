@@ -30,7 +30,21 @@ export class Entity {
 /**
  * Player base class
  */
-export class Player extends Entity {}
+export class Player extends Entity {
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.strokeStyle = "white";
+        ctx.moveTo(10, 10);
+        ctx.lineTo(50, 50);
+        ctx.lineTo(10, 50);
+        ctx.lineTo(10, 10);
+        ctx.stroke();
+        ctx.closePath();
+    }
+}
 
 /**
  * Asteroid base class

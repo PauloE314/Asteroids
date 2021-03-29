@@ -40,6 +40,9 @@ class Renderer {
             this.cvW - 20,
             40
         );
+
+        // Renders entities
+        state.entities.forEach((e) => e.draw(this.ctx));
     }
 
     /**
