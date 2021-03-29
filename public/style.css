@@ -60,7 +60,6 @@ main {
     align-items: center;
     flex: 1;
     width: 100vw;
-    background-color: rgb(104, 20, 20);
 }
 
 #play {
