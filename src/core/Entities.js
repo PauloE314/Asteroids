@@ -1,3 +1,5 @@
+import { radian } from "../math/index.js";
+
 /**
  * Base entity class
  */
@@ -31,18 +33,50 @@ export class Entity {
  * Player base class
  */
 export class Player extends Entity {
+    mov = false;
+
+    init() {
+        this.x = 500;
+        this.y = 300;
+        this.mov = true;
+    }
+
     /**
      * @param {CanvasRenderingContext2D} ctx
      */
     draw(ctx) {
-        ctx.beginPath();
+        // Initialization
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(radian(this.ang));
+
+        // Draw path
         ctx.strokeStyle = "white";
-        ctx.moveTo(10, 10);
-        ctx.lineTo(50, 50);
-        ctx.lineTo(10, 50);
-        ctx.lineTo(10, 10);
-        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, -30);
+        ctx.lineTo(-15, 15);
+        ctx.lineTo(0, 10);
+        ctx.lineTo(15, 15);
         ctx.closePath();
+        ctx.stroke();
+
+        if (this.mov) {
+            ctx.beginPath();
+            ctx.moveTo(-7, 12);
+            ctx.lineTo(0, 25);
+            ctx.lineTo(7, 12);
+            ctx.stroke();
+        }
+
+        // Restore
+        ctx.restore();
+    }
+
+    /**
+     * @param {Number} dt
+     */
+    update(dt) {
+        // this.ang += 0.1 * dt;
     }
 }
 
