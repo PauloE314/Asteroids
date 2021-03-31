@@ -36,12 +36,13 @@ class Renderer {
         this.ctx.fillStyle = "white";
         this.ctx.textAlign = "end";
         this.ctx.fillText(
-            `SCORE: ${state.score}   TIME: ${state.time}`,
+            `SCORE: ${state.score}   TIME: ${state.seconds}`,
             this.cvW - 20,
             40
         );
 
         // Renders entities
+        this.ctx.lineWidth = 1;
         state.entities.forEach((e) => e.draw(this.ctx));
     }
 
