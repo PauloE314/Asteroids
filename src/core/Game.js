@@ -1,12 +1,15 @@
 import Renderer from "../renderer/Renderer.js";
 import Settings from "./Settings.js";
+import { KeyboardControl } from "./Control.js";
 import { Player } from "./Entities.js";
 
 export default class Game {
     renderer = new Renderer();
-    score = 0;
-    start = null;
+    controller = new KeyboardControl();
+
     onEnd = function () {};
+    score = 0;
+    frameId = null;
 
     // State
     state = {
@@ -32,6 +35,7 @@ export default class Game {
     async init() {
         this.renderer.init();
         this.player.init();
+        this.controller.init();
 
         this.state.score = 0;
         this.time.start = Date.now();
@@ -44,24 +48,28 @@ export default class Game {
         this.time.dt = time - this.time.last;
 
         // Gets game loop
-        requestAnimationFrame(this.run.bind(this));
+        this.frameId = requestAnimationFrame(this.run.bind(this));
 
         this.state.entities = [this.player];
         this.state.seconds = ((Date.now() - this.time.start) / 1000).toFixed(0);
 
         // Update and draw
         if (this.time.dt > Settings.frmRate) {
-            this.state.entities.forEach((e) => e.update(this.time.dt));
+            this.player.update(this.time.dt, this.controller.command);
+            this.asteroids.forEach((e) => e.update(this.time.dt));
             this.renderer.renderState(this.state);
             this.time.last = time;
         }
+
+        if (this.state.seconds > 5) this.end();
     }
 
     /**
      * Stops game
      */
-    end(id) {
-        cancelAnimationFrame(id);
+    end() {
+        cancelAnimationFrame(this.frameId);
+        this.controller.end();
         this.onEnd();
     }
 }

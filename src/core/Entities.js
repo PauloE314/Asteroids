@@ -1,4 +1,5 @@
 import { radian } from "../math/index.js";
+import { CONTROL_CODES } from "./Control.js";
 
 /**
  * Base entity class
@@ -74,9 +75,21 @@ export class Player extends Entity {
 
     /**
      * @param {Number} dt
+     * @param {Number} command
      */
-    update(dt) {
-        // this.ang += 0.1 * dt;
+    update(dt, command) {
+        switch (command) {
+            case CONTROL_CODES.right:
+                this.ang += 0.2 * dt;
+                break;
+
+            case CONTROL_CODES.left:
+                this.ang -= 0.2 * dt;
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
