@@ -3,7 +3,7 @@
  * @param {Number} b
  * @returns {Number}
  */
-export function getSmaller(a, b) {
+export function min(a, b) {
     return a < b ? a : b;
 }
 

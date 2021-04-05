@@ -28,7 +28,7 @@ html {
 .title {
     font-family: var(--retro-strong-font);
     font-size: 5rem;
-    padding: 3rem 0 5rem 0;
+    padding: 2rem 0 3rem 0;
 }
 .btn {
     background-color: var(--dark);
@@ -36,6 +36,7 @@ html {
     color: var(--light);
     cursor: pointer;
     animation: ABlink 2s infinite;
+    margin-top: 3rem;
 }
 .btn:hover {
     animation: none !important;

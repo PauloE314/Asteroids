@@ -1,4 +1,5 @@
-import { getSmaller } from "../math/index.js";
+import { min } from "../math/index.js";
+import { SETTINGS } from "../core/Game.js";
 
 class Renderer {
     HTMLCanvas = null;
@@ -7,6 +8,7 @@ class Renderer {
 
     cvW = 0;
     cvH = 0;
+    ratio = 1;
 
     /**
      * Loads renderer
@@ -41,7 +43,12 @@ class Renderer {
 
         // Renders entities
         this.ctx.lineWidth = 1;
+
+        // Scales size
+        this.ctx.save();
+        this.ctx.scale(this.ratio, this.ratio);
         state.entities.forEach((e) => e.draw(this.ctx));
+        this.ctx.restore();
     }
 
     /**
@@ -60,11 +67,14 @@ class Renderer {
      */
     screenResize() {
         const bound = this.HTMLCvContainer.getBoundingClientRect();
-        const size = getSmaller(bound.height * 1.5, bound.width);
-        this.cvH = size / 1.5;
+
+        const size = min(bound.height * SETTINGS.virtual.p, bound.width);
+        this.cvH = size / SETTINGS.virtual.p;
         this.cvW = size;
         this.HTMLCanvas.width = this.cvW;
         this.HTMLCanvas.height = this.cvH;
+
+        this.ratio = this.cvH / SETTINGS.virtual.h;
     }
 }
 
