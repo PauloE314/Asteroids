@@ -1,5 +1,5 @@
 import runGame from "../src/index.js";
-import settings from "../src/core/Settings.js";
+import { SETTINGS } from "../src/core/Game.js";
 import { handleErr } from "../src/core/Errors.js";
 import { getPlatform } from "../src/utils/index.js";
 
@@ -10,7 +10,7 @@ const platform = getPlatform();
 
 // TEMP
 // Checks the platform
-if (platform != settings.platform.desktop) {
+if (platform != SETTINGS.platform.desktop) {
     HTMLPltfErrorMessage.style.display = "block";
     HTMLPlayButton.style.display = "none";
 }

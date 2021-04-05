@@ -1,5 +1,4 @@
 import Renderer from "../renderer/Renderer.js";
-import Settings from "./Settings.js";
 import { KeyboardControl } from "./Control.js";
 import { Player } from "./Entities.js";
 
@@ -55,7 +54,7 @@ export default class Game {
         this.state.seconds = ((Date.now() - this.time.start) / 1000).toFixed(0);
 
         // Update and draw
-        if (this.time.dt > Settings.frmRate) {
+        if (this.time.dt > SETTINGS.frmRate) {
             this.player.update(this.time.dt, this.controller.commands);
             this.asteroids.forEach((e) => e.update(this.time.dt));
             this.renderer.render(this.state);
@@ -72,3 +71,8 @@ export default class Game {
         this.onEnd();
     }
 }
+
+export const SETTINGS = {
+    frmRate: 50,
+    platform: { desktop: 1, mobile: 2 },
+};
