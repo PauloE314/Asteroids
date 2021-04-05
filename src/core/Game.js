@@ -60,8 +60,6 @@ export default class Game {
             this.renderer.render(this.state);
             this.time.last = time;
         }
-
-        if (this.state.seconds > 5) this.end();
     }
 
     /**

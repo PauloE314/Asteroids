@@ -23,14 +23,12 @@ export class Control {
 
         document.addEventListener("keydown", this.onKeydown);
         document.addEventListener("keyup", this.onKeyup);
-        console.log("Init");
     }
 
     /**
      * @param {KeyboardEvent} event
      */
     onKeydown(event) {
-        console.log("Key");
         this.command = KB_CODES[event.code];
     }
 
@@ -47,7 +45,6 @@ export class Control {
     end() {
         document.removeEventListener("keydown", this.onKeydown);
         document.removeEventListener("keyup", this.onKeyup);
-        console.log("End");
     }
 }
 
