@@ -1,13 +1,16 @@
 import runGame from "../src/index.js";
 import errorHandler from "../src/exceptions/Handler.js";
-import validator from "../src/core/Validator.js";
+import settings from "../src/core/Settings.js";
+import { getPlatform } from "../src/utils/index.js";
 
 const HTMLPage = document.getElementById("page");
 const HTMLPlayButton = document.getElementById("play");
 const HTMLPltfErrorMessage = document.getElementById("pltf-error");
+const platform = getPlatform();
 
+// TEMP
 // Checks the platform
-if (!validator.isDesktop(false)) {
+if (platform != settings.platform.desktop) {
     HTMLPltfErrorMessage.style.display = "block";
     HTMLPlayButton.style.display = "none";
 }
@@ -15,7 +18,7 @@ if (!validator.isDesktop(false)) {
 else {
     HTMLPlayButton.onclick = () => {
         HTMLPage.classList.add("in-game");
-        runGame()
+        runGame(platform)
             .then(() => {
                 HTMLPage.classList.remove("in-game");
             })

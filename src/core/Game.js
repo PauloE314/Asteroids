@@ -31,8 +31,9 @@ export default class Game {
 
     /**
      * Initialize dependencies
+     * @param {Number} platform
      */
-    async init() {
+    async init(platform) {
         this.renderer.init();
         this.player.init();
         this.controller.init();
