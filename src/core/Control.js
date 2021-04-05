@@ -1,18 +1,27 @@
-export const CONTROL_CODES = {
-    left: 1,
-    right: 2,
-    forwards: 3,
+export const COMMAND_ENUM = {
+    LEFT: 0,
+    RIGHT: 1,
+    FORWARDS: 2,
+    FIRE: 3,
 };
 
-const KB_CODES = {
-    KeyA: CONTROL_CODES.left,
-    KeyD: CONTROL_CODES.right,
-    Space: CONTROL_CODES.forwards,
-};
-
+/**
+ * Base control interface
+ */
 export class Control {
     lastCommand = 0;
-    command = 0;
+    commands = [false, false, false, false]; // LEFT, RIGHT, FORWARDS, FIRE
+
+    init() {}
+    end() {}
+}
+
+export class KeyboardControl extends Control {
+    KEY_CODES = {
+        KeyA: COMMAND_ENUM.LEFT,
+        KeyD: COMMAND_ENUM.RIGHT,
+        KeyW: COMMAND_ENUM.FORWARDS,
+    };
 
     /**
      * Initializes listeners and initial settings
@@ -29,14 +38,16 @@ export class Control {
      * @param {KeyboardEvent} event
      */
     onKeydown(event) {
-        this.command = KB_CODES[event.code];
+        const command = this.KEY_CODES[event.code];
+        if (command !== undefined) this.commands[command] = true;
     }
 
     /**
      * @param {KeyboardEvent} event
      */
     onKeyup(event) {
-        this.command = 0;
+        const command = this.KEY_CODES[event.code];
+        if (command !== undefined) this.commands[command] = false;
     }
 
     /**
@@ -47,5 +58,3 @@ export class Control {
         document.removeEventListener("keyup", this.onKeyup);
     }
 }
-
-export class KeyboardControl extends Control {}
