@@ -57,7 +57,7 @@ export default class Game {
         if (this.time.dt > Settings.frmRate) {
             this.player.update(this.time.dt, this.controller.command);
             this.asteroids.forEach((e) => e.update(this.time.dt));
-            this.renderer.renderState(this.state);
+            this.renderer.render(this.state);
             this.time.last = time;
         }
 

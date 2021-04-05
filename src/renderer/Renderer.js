@@ -28,7 +28,7 @@ class Renderer {
      * Renders state on canvas
      * @param {*} state
      */
-    renderState(state) {
+    render(state) {
         this.clear();
 
         // Renders score
