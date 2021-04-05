@@ -74,5 +74,6 @@ export default class Game {
 
 export const SETTINGS = {
     frmRate: 50,
+    maxSpeed: 20,
     platform: { desktop: 1, mobile: 2 },
 };

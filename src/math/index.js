@@ -13,3 +13,17 @@ export function getSmaller(a, b) {
 export function radian(n) {
     return (Math.PI / 180) * n;
 }
+
+/**
+ * @param {Number} n
+ */
+export function sin(n) {
+    return Math.sin(n);
+}
+
+/**
+ * @param {Number} n
+ */
+export function cos(n) {
+    return Math.cos(n);
+}
