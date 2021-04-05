@@ -1,7 +1,5 @@
 import { getSmaller } from "../math/index.js";
 
-const font = "Press Start 2P";
-
 class Renderer {
     HTMLCanvas = null;
     HTMLCvContainer = null;
