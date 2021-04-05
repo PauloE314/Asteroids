@@ -26,7 +26,7 @@ class Renderer {
 
     /**
      * Renders state on canvas
-     * @param {*} state
+     * @param {score: Number, seconds: Number, player: Player asteroids: Asteroid[]} state
      */
     render(state) {
         this.clear();
@@ -47,7 +47,8 @@ class Renderer {
         // Scales size
         this.ctx.save();
         this.ctx.scale(this.ratio, this.ratio);
-        state.entities.forEach((e) => e.draw(this.ctx));
+        state.player.draw(this.ctx);
+        state.asteroids.forEach((a) => a.draw(this.ctx));
         this.ctx.restore();
     }
 

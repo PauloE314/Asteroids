@@ -27,3 +27,26 @@ export function sin(n) {
 export function cos(n) {
     return Math.cos(n);
 }
+
+/**
+ * @param {Number} n
+ */
+export function abs(n) {
+    return Math.abs(n);
+}
+
+/**
+ * @param {Number} n
+ * @param {Number} m
+ */
+export function random(n, m) {
+    return Math.random() * (m - n) + n;
+}
+
+/**
+ * @param {Number} n
+ * @param {Number} m
+ */
+export function randomInt(n, m) {
+    return Math.round(Math.random() * (m - n) + n);
+}

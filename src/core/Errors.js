@@ -35,6 +35,7 @@ export function handleErr(err) {
             break;
         default:
             alert("Um erro desconhecido ocorreu");
+            console.log(err);
             break;
     }
 }

@@ -1,6 +1,6 @@
 import Renderer from "../renderer/Renderer.js";
 import { KeyboardControl } from "./Control.js";
-import { Player } from "./Entities.js";
+import { Asteroid, Player } from "./Entities.js";
 
 export default class Game {
     renderer = new Renderer();
@@ -9,13 +9,6 @@ export default class Game {
     onEnd = function () {};
     score = 0;
     frameId = null;
-
-    // State
-    state = {
-        score: 0,
-        seconds: 0,
-        entities: [],
-    };
 
     // Frame timers
     time = {
@@ -26,7 +19,7 @@ export default class Game {
 
     // Entities
     player = new Player();
-    asteroids = [];
+    asteroids = [new Asteroid(), new Asteroid(), new Asteroid()];
 
     /**
      * Initialize dependencies
@@ -34,10 +27,11 @@ export default class Game {
      */
     async init(platform) {
         this.renderer.init();
-        this.player.init();
+        this.player.init(playerDie);
+        this.asteroids.forEach((a) => a.init());
         this.controller.init();
 
-        this.state.score = 0;
+        this.score = 0;
         this.time.start = Date.now();
     }
 
@@ -50,14 +44,17 @@ export default class Game {
         // Gets game loop
         this.frameId = requestAnimationFrame(this.run.bind(this));
 
-        this.state.entities = [this.player];
-        this.state.seconds = ((Date.now() - this.time.start) / 1000).toFixed(0);
-
         // Update and draw
         if (this.time.dt > SETTINGS.frmRate) {
             this.player.update(this.time.dt, this.controller.commands);
-            this.asteroids.forEach((e) => e.update(this.time.dt));
-            this.renderer.render(this.state);
+            this.asteroids.forEach((a) => a.update(this.time.dt));
+
+            this.renderer.render({
+                score: this.score,
+                seconds: ((Date.now() - this.time.start) / 1000).toFixed(0),
+                player: this.player,
+                asteroids: this.asteroids,
+            });
             this.time.last = time;
         }
     }
@@ -72,6 +69,15 @@ export default class Game {
     }
 }
 
+/**
+ * Handles player's death
+ * @param {Player} p
+ */
+function playerDie(p) {}
+
+/**
+ * App settings
+ */
 export const SETTINGS = {
     frmRate: 30,
     maxSpeed: 30,
