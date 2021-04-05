@@ -20,3 +20,21 @@ export default class GameError extends Error {
         this.code = code[0];
     }
 }
+
+/**
+ * Handles all game errors
+ * @param {GameError} err
+ */
+export function handleErr(err) {
+    switch (err.code) {
+        case errCodes.inGameError[0]:
+            alert("O jogo já está ocorrendo");
+            break;
+        case errCodes.platformError[0]:
+            alert("O jogo não está disponível para a sua plataforma");
+            break;
+        default:
+            alert("Um erro desconhecido ocorreu");
+            break;
+    }
+}

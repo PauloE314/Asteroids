@@ -1,6 +1,6 @@
 import runGame from "../src/index.js";
-import errorHandler from "../src/exceptions/Handler.js";
 import settings from "../src/core/Settings.js";
+import { handleErr } from "../src/core/Errors.js";
 import { getPlatform } from "../src/utils/index.js";
 
 const HTMLPage = document.getElementById("page");
@@ -24,7 +24,7 @@ else {
             })
             .catch((err) => {
                 HTMLPage.classList.remove("in-game");
-                errorHandler.handle(err);
+                handleErr(err);
             });
     };
 
