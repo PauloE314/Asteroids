@@ -6,18 +6,19 @@ import { SETTINGS } from "./Game.js";
  * Base entity class
  */
 export class Entity {
-    x = 0;
-    y = 0;
-    vx = 0;
-    vy = 0;
-    radius = 30;
-    ang = 0; // Inclination angle
     onDie = function () {};
 
     /**
      * Initializes the entity
      */
-    init() {}
+    init() {
+        this.x = 0;
+        this.y = 0;
+        this.vx = 0;
+        this.vy = 0;
+        this.radius = 30;
+        this.ang = 0; // Inclination angle
+    }
 
     /**
      * Updates entity's current state
@@ -72,6 +73,7 @@ export class Player extends Entity {
     mov = false;
 
     init(onDie) {
+        super.init();
         this.x = SETTINGS.virtual.w / 2;
         this.y = SETTINGS.virtual.h / 2;
         this.onDie = onDie;
@@ -145,8 +147,10 @@ export class Asteroid extends Entity {
     dots = [];
 
     init() {
-        this.size = 2; // 3 - big, 2 - medium, - 1 small
-        this.radius = 87.5 - 67.5 / this.size;
+        super.init();
+
+        this.size = randomInt(1, 2); // 2 - big, 1 - medium, - 0 small
+        this.radius = 25 * Math.pow(2, this.size);
 
         this.x = random(0, SETTINGS.virtual.w);
         this.y = random(0, SETTINGS.virtual.h);
@@ -154,7 +158,8 @@ export class Asteroid extends Entity {
         this.vy = random(-10, 10);
         this.vr = random(10, 60);
 
-        this.dots = ASTEROID_DOT_PATHS.medium[randomInt(0, 2)];
+        this.dots =
+            ASTEROID_DOT_PATHS["smb".charAt(this.size)][randomInt(0, 2)];
     }
 
     /**
@@ -191,10 +196,10 @@ export class Asteroid extends Entity {
 
 // Asteroids paths (always have 6 dots)
 const ASTEROID_DOT_PATHS = {
-    small: [
-        // 20 radius
+    s: [
+        // 25 radius
     ],
-    medium: [
+    m: [
         // 50 radius
         [
             [0, -50],
@@ -224,7 +229,34 @@ const ASTEROID_DOT_PATHS = {
             [-48, -0],
         ],
     ],
-    big: [
-        // 65 radius
+    b: [
+        // 100 radius
+        [
+            [-80, -60],
+            [30, -90],
+            [90, -40],
+            [50, 80],
+            [-64, 75],
+            [-38, 50],
+            [-70, -0],
+        ],
+        [
+            [-40, -44],
+            [0, -95],
+            [88, -44],
+            [70, 65],
+            [-40, 70],
+            [-50, 20],
+            [-90, -30],
+        ],
+        [
+            [-42, -83],
+            [68, -60],
+            [38, 8],
+            [60, 75],
+            [-50, 53],
+            [-68, 68],
+            [-98, -0],
+        ],
     ],
 };

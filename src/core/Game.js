@@ -5,34 +5,35 @@ import { Asteroid, Player } from "./Entities.js";
 export default class Game {
     renderer = new Renderer();
     controller = new KeyboardControl();
-
     onEnd = function () {};
-    score = 0;
-    frameId = null;
-
-    // Frame timers
-    time = {
-        dt: 0,
-        last: 0,
-        start: 0,
-    };
-
-    // Entities
-    player = new Player();
-    asteroids = [new Asteroid(), new Asteroid(), new Asteroid()];
 
     /**
      * Initialize dependencies
      * @param {Number} platform
      */
     init(platform) {
+        this.frameId = null;
+
         this.renderer.init();
-        this.player.init(playerDie);
-        this.asteroids.forEach((a) => a.init());
         this.controller.init();
 
+        var i = 0;
+
+        this.player = new Player();
+        this.player.init(playerDie);
+
+        this.asteroids = [];
+        for (let i = 0; i < 10; i++) {
+            this.asteroids.push(new Asteroid());
+            this.asteroids[i].init();
+        }
+
         this.score = 0;
-        this.time.start = Date.now();
+        this.time = {
+            dt: 0,
+            last: 0,
+            start: Date.now(),
+        };
     }
 
     /**
