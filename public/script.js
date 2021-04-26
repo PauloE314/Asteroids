@@ -1,15 +1,15 @@
-import runGame from "../src/index.js";
-import { SETTINGS } from "../src/core/Game.js";
+import Game, { SETTINGS } from "../src/core/Game.js";
 import { handleErr } from "../src/core/Errors.js";
-import { getPlatform } from "../src/utils/index.js";
+import { getPlatform } from "../src/utils.js";
 
 const HTMLPage = document.getElementById("page");
 const HTMLPlayButton = document.getElementById("play");
 const HTMLPltfErrorMessage = document.getElementById("pltf-error");
 const platform = getPlatform();
 
-// TEMP
-// Checks the platform
+let game;
+
+// Checks the platform  (TEMP)
 if (platform != SETTINGS.platform.desktop) {
     HTMLPltfErrorMessage.style.display = "block";
     HTMLPlayButton.style.display = "none";
@@ -18,14 +18,23 @@ if (platform != SETTINGS.platform.desktop) {
 else {
     HTMLPlayButton.onclick = () => {
         HTMLPage.classList.add("in-game");
-        runGame(platform)
-            .then(() => {
+        try {
+            // Creates game instance
+            game = new Game();
+            game.init(platform);
+            game.onEnd = () => {
+                game = null;
                 HTMLPage.classList.remove("in-game");
-            })
-            .catch((err) => {
-                HTMLPage.classList.remove("in-game");
-                handleErr(err);
-            });
+            };
+
+            // Runs application
+            game.run();
+
+            // Catches game errors
+        } catch (err) {
+            HTMLPage.classList.remove("in-game");
+            handleErr(err);
+        }
     };
 
     HTMLPlayButton.click();

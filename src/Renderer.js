@@ -1,4 +1,3 @@
-import { min } from "./math.js";
 import { SETTINGS } from "./core/Game.js";
 
 class Renderer {
@@ -17,6 +16,10 @@ class Renderer {
         this.HTMLCanvas = document.getElementById("cv");
         this.HTMLCvContainer = document.querySelector("main");
         this.ctx = this.HTMLCanvas.getContext("2d");
+
+        cvW = 0;
+        cvH = 0;
+        ratio = 1;
 
         this.screenResize();
         window.addEventListener("resize", () => {
@@ -69,7 +72,7 @@ class Renderer {
     screenResize() {
         const bound = this.HTMLCvContainer.getBoundingClientRect();
 
-        const size = min(bound.height * SETTINGS.virtual.p, bound.width);
+        const size = Math.min(bound.height * SETTINGS.virtual.p, bound.width);
         this.cvH = size / SETTINGS.virtual.p;
         this.cvW = size;
         this.HTMLCanvas.width = this.cvW;

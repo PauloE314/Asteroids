@@ -25,7 +25,7 @@ export default class Game {
      * Initialize dependencies
      * @param {Number} platform
      */
-    async init(platform) {
+    init(platform) {
         this.renderer.init();
         this.player.init(playerDie);
         this.asteroids.forEach((a) => a.init());

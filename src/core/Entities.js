@@ -1,4 +1,4 @@
-import { sin, cos, abs, random, randomInt } from "../math.js";
+import { random, randomInt } from "../math.js";
 import { COMMAND_ENUM } from "./Control.js";
 import { SETTINGS } from "./Game.js";
 
@@ -122,11 +122,11 @@ export class Player extends Entity {
         // if (commands[COMMAND_ENUM.FIRE]) this.ang -= 0.2 * dt;
 
         // Speed
-        const nextVY = this.vy + sin(this.ang) * this.mov;
-        const nextVX = this.vx + cos(this.ang) * this.mov;
+        const nextVY = this.vy + Math.sin(this.ang) * this.mov;
+        const nextVX = this.vx + Math.cos(this.ang) * this.mov;
 
-        if (abs(nextVY) <= SETTINGS.maxSpeed) this.vy = nextVY;
-        if (abs(nextVX) <= SETTINGS.maxSpeed) this.vx = nextVX;
+        if (Math.abs(nextVY) <= SETTINGS.maxSpeed) this.vy = nextVY;
+        if (Math.abs(nextVX) <= SETTINGS.maxSpeed) this.vx = nextVX;
 
         // Default update
         this.defaultUpdate(dt);
