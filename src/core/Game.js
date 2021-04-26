@@ -1,4 +1,4 @@
-import Renderer from "../renderer/Renderer.js";
+import Renderer from "../Renderer.js";
 import { KeyboardControl } from "./Control.js";
 import { Asteroid, Player } from "./Entities.js";
 

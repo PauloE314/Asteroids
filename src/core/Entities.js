@@ -1,4 +1,4 @@
-import { sin, cos, abs, random, randomInt } from "../math/index.js";
+import { sin, cos, abs, random, randomInt } from "../math.js";
 import { COMMAND_ENUM } from "./Control.js";
 import { SETTINGS } from "./Game.js";
 

@@ -1,5 +1,5 @@
-import { min } from "../math/index.js";
-import { SETTINGS } from "../core/Game.js";
+import { min } from "./math.js";
+import { SETTINGS } from "./core/Game.js";
 
 class Renderer {
     HTMLCanvas = null;
