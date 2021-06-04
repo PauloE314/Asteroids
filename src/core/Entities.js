@@ -72,11 +72,12 @@ export class Entity {
 export class Player extends Entity {
     mov = false;
 
-    init(onDie) {
+    onDie() {}
+
+    init() {
         super.init();
         this.x = SETTINGS.virtual.w / 2;
         this.y = SETTINGS.virtual.h / 2;
-        this.onDie = onDie;
     }
 
     /**
@@ -98,6 +99,7 @@ export class Player extends Entity {
         ctx.closePath();
         ctx.stroke();
 
+        // Draws "fire"
         if (this.mov) {
             ctx.beginPath();
             ctx.moveTo(-13, -10);

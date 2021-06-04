@@ -2,7 +2,7 @@
  * @param {Number} n
  */
 export function radian(n) {
-    return (Math.PI / 180) * n;
+  return (Math.PI / 180) * n;
 }
 
 /**
@@ -10,7 +10,7 @@ export function radian(n) {
  * @param {Number} m
  */
 export function random(n, m) {
-    return Math.random() * (m - n) + n;
+  return Math.random() * (m - n) + n;
 }
 
 /**
@@ -18,5 +18,5 @@ export function random(n, m) {
  * @param {Number} m
  */
 export function randomInt(n, m) {
-    return Math.round(Math.random() * (m - n) + n);
+  return Math.round(Math.random() * (m - n) + n);
 }

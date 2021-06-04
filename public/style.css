@@ -1,118 +1,118 @@
 :root {
-    --retro-strong-font: "Press Start 2P", serif;
-    --retro-light-font: "VT323", serif;
-    --default-font: "Roboto", sans-serif;
-    --dark: rgb(8, 8, 8);
-    --white: rgba(255, 255, 255);
-    --light: rgba(200, 200, 200);
+  --retro-strong-font: "Press Start 2P", serif;
+  --retro-light-font: "VT323", serif;
+  --default-font: "Roboto", sans-serif;
+  --dark: rgb(8, 8, 8);
+  --white: rgba(255, 255, 255);
+  --light: rgba(200, 200, 200);
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: var(--default-font);
-    border: none;
-    outline: none;
-    text-decoration: none;
-    list-style: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--default-font);
+  border: none;
+  outline: none;
+  text-decoration: none;
+  list-style: none;
 }
 
 body,
 html {
-    background-color: var(--dark);
-    color: var(--white);
+  background-color: var(--dark);
+  color: var(--white);
 }
 
 /* Common classes */
 .title {
-    font-family: var(--retro-strong-font);
-    font-size: 5rem;
-    padding: 2rem 0 3rem 0;
+  font-family: var(--retro-strong-font);
+  font-size: 5rem;
+  padding: 2rem 0 3rem 0;
 }
 .btn {
-    background-color: var(--dark);
-    font-family: var(--retro-strong-font);
-    color: var(--light);
-    cursor: pointer;
-    animation: ABlink 2s infinite;
-    margin-top: 3rem;
+  background-color: var(--dark);
+  font-family: var(--retro-strong-font);
+  color: var(--light);
+  cursor: pointer;
+  animation: ABlink 2s infinite;
+  margin-top: 3rem;
 }
 .btn:hover {
-    animation: none !important;
-    color: var(--white);
+  animation: none !important;
+  color: var(--white);
 }
 
 /* Specific style */
 #page {
-    height: 100vh;
-    max-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem 0;
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
 
-    /* min-width: 400px; */
+  /* min-width: 400px; */
 }
 main {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-    width: 100vw;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100vw;
 }
 
 #play {
-    font-size: 2rem;
-    margin-top: 3rem;
+  font-size: 2rem;
+  margin-top: 3rem;
 }
 
 #pltf-error {
-    display: none;
-    font-size: 2rem;
-    color: rgb(223, 54, 54);
-    font-weight: bold;
-    background-color: white;
-    padding: 1rem;
-    text-align: center;
+  display: none;
+  font-size: 2rem;
+  color: rgb(223, 54, 54);
+  font-weight: bold;
+  background-color: white;
+  padding: 1rem;
+  text-align: center;
 }
 
 /* In game styles */
 #page.in-game main {
-    display: flex;
+  display: flex;
 }
 #page.in-game #play {
-    display: none;
+  display: none;
 }
 #page.in-game .title {
-    font-size: 3rem;
+  font-size: 3rem;
 }
 
 /* Animations */
 @keyframes ABlink {
-    30% {
-        opacity: 1;
-    }
-    31% {
-        opacity: 0;
-    }
-    69% {
-        opacity: 0;
-    }
-    70% {
-        opacity: 1;
-    }
+  30% {
+    opacity: 1;
+  }
+  31% {
+    opacity: 0;
+  }
+  69% {
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 600px) {
-    .title {
-        font-size: 2rem;
-    }
-    #play {
-        font-size: 1rem;
-    }
-    #pltf-error {
-        font-size: 1rem;
-    }
+  .title {
+    font-size: 2rem;
+  }
+  #play {
+    font-size: 1rem;
+  }
+  #pltf-error {
+    font-size: 1rem;
+  }
 }
