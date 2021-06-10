@@ -1,6 +1,6 @@
 import Game, { SETTINGS } from "../src/core/Game.js";
 import { handleErr } from "../src/core/Errors.js";
-import { getPlatform } from "../src/utils.js";
+import { getPlatform } from "../src/utils/index.js";
 
 const HTMLPage = document.getElementById("page");
 const HTMLPlayButton = document.getElementById("play");
@@ -37,5 +37,5 @@ else {
     }
   };
 
-  // HTMLPlayButton.click();
+  HTMLPlayButton.click();
 }
