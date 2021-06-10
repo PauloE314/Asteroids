@@ -17,6 +17,7 @@ class Renderer {
     this.HTMLCvContainer = document.querySelector("main");
     this.ctx = this.HTMLCanvas.getContext("2d");
 
+    this.screenResize = this.screenResize.bind(this);
     this.screenResize();
     window.addEventListener("resize", this.screenResize);
   }
