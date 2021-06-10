@@ -1,10 +1,11 @@
 import Game, { SETTINGS } from "../src/core/Game.js";
-import { handleErr } from "../src/core/Errors.js";
+import { handleErr } from "../src/core/errors.js";
 import { getPlatform } from "../src/utils/index.js";
 
 const HTMLPage = document.getElementById("page");
 const HTMLPlayButton = document.getElementById("play");
 const HTMLPltfErrorMessage = document.getElementById("pltf-error");
+const HTMLGmErrorMessage = document.getElementById("gm-error");
 const platform = getPlatform();
 
 let game;
@@ -21,7 +22,7 @@ else {
     try {
       // Creates game instance
       game = new Game();
-      game.init(platform);
+      game.init(platform, HTMLGmErrorMessage);
       game.onEnd = () => {
         game = null;
         // HTMLPage.classList.remove("in-game");
@@ -33,7 +34,8 @@ else {
       // Catches game errors
     } catch (err) {
       HTMLPage.classList.remove("in-game");
-      handleErr(err);
+      handleErr(game, HTMLGmErrorMessage);
+      game = null;
     }
   };
 

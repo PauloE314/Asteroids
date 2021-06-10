@@ -1,41 +1,28 @@
-export const errCodes = {
-  unknownError: [0, "Default Error"],
-  platformError: [1, "Platform Error"],
-  inGameError: [2, "In Game Error"],
-};
+import Game from "./Game.js";
 
 /**
- * Default game error
+ * @param {Game} game
+ * @param {HTMLSpanElement} htmlErrorElement
+ * @param {string} message
  */
-export default class GameError extends Error {
-  /**
-   * Constructs a game error
-   * @param {[number, string]} code
-   * @param {string} message
-   */
-  constructor(code, message = "Game error") {
-    super();
-    this.message = message;
-    this.name = code[1];
-    this.code = code[0];
-  }
-}
+export function handleErr(game, htmlErrorElement, message) {
+  message = message ? message : "An unknown error has occured";
 
-/**
- * Handles all game errors
- * @param {GameError} err
- */
-export function handleErr(err) {
-  switch (err.code) {
-    case errCodes.inGameError[0]:
-      alert("O jogo já está ocorrendo");
-      break;
-    case errCodes.platformError[0]:
-      alert("O jogo não está disponível para a sua plataforma");
-      break;
-    default:
-      alert("Um erro desconhecido ocorreu");
-      console.log(err);
-      break;
-  }
+  // Ends game
+  if (game) game.end();
+
+  htmlErrorElement.style.display = "block";
+  htmlErrorElement.innerHTML = `${message}\n Reloading page in 3`;
+
+  // Shows error message with regressive counting
+  let i = 2;
+  const id = setInterval(() => {
+    htmlErrorElement.innerHTML = `${message}\n Reloading page in ${i}`;
+    i--;
+
+    if (i < 0) {
+      clearInterval(id);
+      window.location.reload();
+    }
+  }, 1500);
 }
