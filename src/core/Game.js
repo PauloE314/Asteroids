@@ -1,6 +1,8 @@
 import Renderer from "./Renderer.js";
 import { KeyboardControl } from "./Control.js";
 import { Asteroid, Player } from "./Entities.js";
+import { handleErr } from "./errors.js";
+import { getDistance } from "../utils/math.js";
 
 export default class Game {
   renderer = new Renderer();
@@ -10,8 +12,11 @@ export default class Game {
   /**
    * Initialize dependencies
    * @param {Number} platform
+   * @param {HTMLSpanElement} htmlErrorELement
    */
-  init(platform) {
+  init(platform, htmlErrorELement) {
+    this.platform = platform;
+    this.htmlErrorElement = htmlErrorELement;
     this.frameId = null;
 
     this.renderer.init();
@@ -28,8 +33,8 @@ export default class Game {
 
       this.asteroids[i].vx = 0;
       this.asteroids[i].vy = 0;
-      this.asteroids[i].x = 300;
-      this.asteroids[i].y = 200;
+      this.asteroids[i].x = 500;
+      this.asteroids[i].y = 250;
     }
 
     this.score = 0;
@@ -44,36 +49,39 @@ export default class Game {
    * Main game loop
    */
   run(time = 0) {
-    this.time.dt = time - this.time.last;
+    try {
+      this.time.dt = time - this.time.last;
 
-    // Gets game loop
-    this.frameId = requestAnimationFrame(this.run.bind(this));
+      // Gets game loop
+      this.frameId = requestAnimationFrame(this.run.bind(this));
 
-    // Update and draw
-    if (this.time.dt > SETTINGS.frmRate) {
-      // Updates data
-      this.time.last = time;
-      this.player.update(this.time.dt, this.controller.commands);
-      this.asteroids.forEach((a) => a.update(this.time.dt));
+      // Update and draw
+      if (this.time.dt > SETTINGS.frmRate) {
+        // Updates data
+        this.time.last = time;
+        this.player.update(this.time.dt, this.controller.commands);
+        this.asteroids.forEach((a) => a.update(this.time.dt));
 
-      // Renders everything
-      this.renderer.render({
-        score: this.score,
-        seconds: ((Date.now() - this.time.start) / 1000).toFixed(0),
-        player: this.player,
-        asteroids: this.asteroids,
-      });
+        // Renders everything
+        this.renderer.render({
+          score: this.score,
+          seconds: ((Date.now() - this.time.start) / 1000).toFixed(0),
+          player: this.player,
+          asteroids: this.asteroids,
+        });
 
-      // Checks for collisions
-      this.asteroids.forEach((a) => {
-        const dis = Math.sqrt(
-          Math.pow(a.x - this.player.x, 2) + Math.pow(a.y - this.player.y, 2)
-        );
-        if (dis < (a.radius + this.player.radius) * 0.8) {
-          this.player.die();
-          this.end();
-        }
-      });
+        // Checks for collisions
+        this.asteroids.forEach((aasteroid) => {
+          const dis = getDistance(aasteroid, this.player);
+          if (dis < (aasteroid.radius + this.player.radius) * 0.8) {
+            this.player.die();
+            // this.end();
+            throw Error("foo");
+          }
+        });
+      }
+    } catch (err) {
+      handleErr(this, this.htmlErrorElement);
     }
   }
 
