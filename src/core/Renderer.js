@@ -1,4 +1,4 @@
-import { SETTINGS } from "./core/Game.js";
+import { SETTINGS } from "./Game.js";
 
 class Renderer {
   HTMLCanvas = null;
