@@ -1,6 +1,10 @@
 import { random, randomInt } from "../utils/math.js";
 import { COMMAND_ENUM } from "./Control.js";
-import { SETTINGS } from "./Game.js";
+import SETTINGS from "../settings.js";
+
+const _2PI = Math.PI * 2;
+const { ALIVE, DYING, DEAD } = SETTINGS.LIFE_STATES;
+const { VIRTUAL } = SETTINGS;
 
 /**
  * Base entity class
@@ -37,12 +41,12 @@ export class Entity {
     this.x += this.vx * dt * 0.015;
 
     // Teleport X
-    if (this.x >= SETTINGS.virtual.w + this.radius) this.x = 0;
-    else if (this.x < -this.radius) this.x = SETTINGS.virtual.w;
+    if (this.x >= VIRTUAL.w + this.radius) this.x = 0;
+    else if (this.x < -this.radius) this.x = VIRTUAL.w;
 
     // Teleport Y
-    if (this.y >= SETTINGS.virtual.h + this.radius) this.y = 0;
-    else if (this.y < -this.radius) this.y = SETTINGS.virtual.h;
+    if (this.y >= VIRTUAL.h + this.radius) this.y = 0;
+    else if (this.y < -this.radius) this.y = VIRTUAL.h;
   }
 
   /**
@@ -50,7 +54,6 @@ export class Entity {
    * @param {number} n
    */
   setAngle(n) {
-    const _2PI = Math.PI * 2;
     this.ang = n > _2PI ? n - _2PI : n;
   }
 
@@ -70,44 +73,62 @@ export class Entity {
  * Player base class
  */
 export class Player extends Entity {
-  mov = false;
-
-  onDie() {}
-
   init() {
     super.init();
-    this.x = SETTINGS.virtual.w / 2;
-    this.y = SETTINGS.virtual.h / 2;
+    this.x = VIRTUAL.w / 2;
+    this.y = VIRTUAL.h / 2;
+    this.mov = false;
+
+    this.life = ALIVE;
+    this.deathAnimationCounter = 0;
   }
 
   /**
    * @param {CanvasRenderingContext2D} ctx
    */
   draw(ctx) {
+    if (this.life == DEAD) return;
+
     // Initialization
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.ang);
 
-    // Draw path
-    ctx.strokeStyle = "white";
-    ctx.beginPath();
-    ctx.moveTo(30, 0);
-    ctx.lineTo(-15, -15);
-    ctx.lineTo(-10, 0);
-    ctx.lineTo(-15, 15);
-    ctx.closePath();
-    ctx.stroke();
+    // Draws animation deatch
+    if (this.life == DYING) {
+      const c = this.deathAnimationCounter;
+      const ptclAmount = 5;
+      const angle = _2PI / ptclAmount;
 
-    // Draws "fire"
-    if (this.mov) {
-      ctx.beginPath();
-      ctx.moveTo(-13, -10);
-      ctx.lineTo(-25, 0);
-      ctx.lineTo(-13, 10);
-      ctx.stroke();
+      for (let i = 0; i < ptclAmount; i++) {
+        ctx.fillRect(
+          c * Math.cos(angle * i) + randomInt(-1, 1),
+          c * Math.sin(angle * i) + randomInt(-1, 1),
+          4,
+          4
+        );
+      }
     }
 
+    // Draw path
+    else {
+      ctx.beginPath();
+      ctx.moveTo(30, 0);
+      ctx.lineTo(-15, -15);
+      ctx.lineTo(-10, 0);
+      ctx.lineTo(-15, 15);
+      ctx.closePath();
+      ctx.stroke();
+
+      // Draws "fire"
+      if (this.mov) {
+        ctx.beginPath();
+        ctx.moveTo(-13, -10);
+        ctx.lineTo(-25, 0);
+        ctx.lineTo(-13, 10);
+        ctx.stroke();
+      }
+    }
     // Restore
     ctx.restore();
   }
@@ -117,27 +138,45 @@ export class Player extends Entity {
    * @param {[Number, Number, Number, Number]} commands
    */
   update(dt, commands) {
+    // Life logic
+    if (this.life == DEAD) return;
+    // DYING duration
+    else if (this.life == DYING) {
+      this.deathAnimationCounter += 0.05 * dt;
+      if (this.deathAnimationCounter > 30) this.life = DEAD;
+      return;
+    }
+
     if (commands[COMMAND_ENUM.LEFT]) this.setAngle(this.ang - 0.005 * dt);
     if (commands[COMMAND_ENUM.RIGHT]) this.setAngle(this.ang + 0.005 * dt);
 
-    // TODO
+    // Movimentation
     if (commands[COMMAND_ENUM.FORWARDS]) this.mov = true;
     else this.mov = false;
-    // if (commands[COMMAND_ENUM.FIRE]) this.ang -= 0.2 * dt;
 
     // Speed
     const nextVY = this.vy + Math.sin(this.ang) * this.mov;
     const nextVX = this.vx + Math.cos(this.ang) * this.mov;
 
-    if (Math.abs(nextVY) <= SETTINGS.maxSpeed) this.vy = nextVY;
-    if (Math.abs(nextVX) <= SETTINGS.maxSpeed) this.vx = nextVX;
+    if (Math.abs(nextVY) <= SETTINGS.MAX_SPEED) this.vy = nextVY;
+    if (Math.abs(nextVX) <= SETTINGS.MAX_SPEED) this.vx = nextVX;
 
     // Default update
     this.defaultUpdate(dt);
   }
 
+  /**
+   * Kills Player
+   */
   die() {
-    this.onDie(this);
+    this.life = DYING;
+  }
+
+  /**
+   * Resets player
+   */
+  reset() {
+    this.init();
   }
 }
 
@@ -154,8 +193,8 @@ export class Asteroid extends Entity {
     this.size = randomInt(1, 2); // 2 - big, 1 - medium, - 0 small
     this.radius = 25 * Math.pow(2, this.size);
 
-    this.x = random(0, SETTINGS.virtual.w);
-    this.y = random(0, SETTINGS.virtual.h);
+    this.x = random(0, VIRTUAL.w);
+    this.y = random(0, VIRTUAL.h);
     this.vx = random(-10, 10);
     this.vy = random(-10, 10);
     this.vr = random(10, 60);

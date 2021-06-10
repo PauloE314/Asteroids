@@ -1,8 +1,11 @@
+import SETTINGS from "../settings.js";
 import Renderer from "./Renderer.js";
 import { KeyboardControl } from "./Control.js";
 import { Asteroid, Player } from "./Entities.js";
 import { handleErr } from "./errors.js";
 import { getDistance } from "../utils/math.js";
+
+const { LIFES, FRM_RATE, LIFE_STATES } = SETTINGS;
 
 export default class Game {
   renderer = new Renderer();
@@ -24,7 +27,6 @@ export default class Game {
 
     this.player = new Player();
     this.player.init();
-    this.player.onDie = playerDie;
 
     this.asteroids = [];
     for (let i = 0; i < 1; i++) {
@@ -38,6 +40,7 @@ export default class Game {
     }
 
     this.score = 0;
+    this.lifes = LIFES;
     this.time = {
       dt: 0,
       last: 0,
@@ -56,7 +59,7 @@ export default class Game {
       this.frameId = requestAnimationFrame(this.run.bind(this));
 
       // Update and draw
-      if (this.time.dt > SETTINGS.frmRate) {
+      if (this.time.dt > FRM_RATE) {
         // Updates data
         this.time.last = time;
         this.player.update(this.time.dt, this.controller.commands);
@@ -64,6 +67,7 @@ export default class Game {
 
         // Renders everything
         this.renderer.render({
+          lifes: this.lifes,
           score: this.score,
           seconds: ((Date.now() - this.time.start) / 1000).toFixed(0),
           player: this.player,
@@ -71,19 +75,25 @@ export default class Game {
         });
 
         // Checks for collisions
-        this.asteroids.forEach((aasteroid) => {
-          const dis = getDistance(aasteroid, this.player);
-          if (dis < (aasteroid.radius + this.player.radius) * 0.8) {
-            this.player.die();
-            // this.end();
-            throw Error("foo");
-          }
-        });
+        if (this.player.life == LIFE_STATES.ALIVE)
+          this.asteroids.forEach((aasteroid) => {
+            const dis = getDistance(aasteroid, this.player);
+            if (dis < (aasteroid.radius + this.player.radius) * 0.8) {
+              this.player.die();
+              this.lifes--;
+              // this.end();
+            }
+          });
       }
     } catch (err) {
-      handleErr(this, this.htmlErrorElement);
+      handleErr(this, this.htmlErrorElement, err.message);
     }
   }
+
+  /**
+   * Resets initial configurations and listenners
+   */
+  reset() {}
 
   /**
    * Stops game
@@ -95,23 +105,3 @@ export default class Game {
     this.onEnd();
   }
 }
-
-/**
- * Handles player's death
- * @param {Player} p
- */
-function playerDie(p) {}
-
-/**
- * App settings
- */
-export const SETTINGS = {
-  frmRate: 30,
-  maxSpeed: 30,
-  platform: { desktop: 1, mobile: 2 },
-  virtual: {
-    p: 1.618,
-    h: 700,
-    w: 700 * 1.618,
-  },
-};

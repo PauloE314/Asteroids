@@ -1,4 +1,6 @@
-import { SETTINGS } from "./Game.js";
+import SETTINGS from "../settings.js";
+
+const { VIRTUAL } = SETTINGS;
 
 class Renderer {
   HTMLCanvas = null;
@@ -24,7 +26,7 @@ class Renderer {
 
   /**
    * Renders state on canvas
-   * @param {score: Number, seconds: Number, player: Player asteroids: Asteroid[]} state
+   * @param {lifes: Number, score: Number, seconds: Number, player: Player, asteroids: Asteroid[]} state
    */
   render(state) {
     this.clear();
@@ -34,7 +36,7 @@ class Renderer {
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "end";
     this.ctx.fillText(
-      `SCORE: ${state.score}   TIME: ${state.seconds}`,
+      `LIFES: ${state.lifes}   SCORE: ${state.score}   TIME: ${state.seconds}`,
       this.cvW - 20,
       40
     );
@@ -67,13 +69,13 @@ class Renderer {
   screenResize() {
     const bound = this.HTMLCvContainer.getBoundingClientRect();
 
-    const size = Math.min(bound.height * SETTINGS.virtual.p, bound.width);
-    this.cvH = size / SETTINGS.virtual.p;
+    const size = Math.min(bound.height * VIRTUAL.p, bound.width);
+    this.cvH = size / VIRTUAL.p;
     this.cvW = size;
     this.HTMLCanvas.width = this.cvW;
     this.HTMLCanvas.height = this.cvH;
 
-    this.ratio = this.cvH / SETTINGS.virtual.h;
+    this.ratio = this.cvH / VIRTUAL.h;
   }
 
   /**

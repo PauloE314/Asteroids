@@ -1,4 +1,6 @@
-import { SETTINGS } from "../core/Game.js";
+import SETTINGS from "../settings.js";
+
+const { PLATFORMS } = SETTINGS;
 
 export function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -6,6 +8,6 @@ export function delay(ms) {
 
 export function getPlatform() {
   return window.orientation === undefined
-    ? SETTINGS.platform.desktop
-    : SETTINGS.platform.mobile;
+    ? PLATFORMS.desktop
+    : PLATFORMS.mobile;
 }
