@@ -3,7 +3,6 @@ import { COMMAND_ENUM } from "./Control.js";
 import SETTINGS from "../settings.js";
 
 const _2PI = Math.PI * 2;
-const { ALIVE, DYING, DEAD } = SETTINGS.LIFE_STATES;
 const { VIRTUAL } = SETTINGS;
 
 /**
@@ -22,6 +21,7 @@ export class Entity {
     this.vy = 0;
     this.radius = 30;
     this.ang = 0; // Inclination angle
+    this.render = true;
   }
 
   /**
@@ -75,62 +75,15 @@ export class Entity {
 export class Player extends Entity {
   init() {
     super.init();
+
     this.x = VIRTUAL.w / 2;
     this.y = VIRTUAL.h / 2;
     this.mov = false;
+    this.stateTimeCounter = 0;
 
-    this.life = ALIVE;
-    this.deathAnimationCounter = 0;
-  }
-
-  /**
-   * @param {CanvasRenderingContext2D} ctx
-   */
-  draw(ctx) {
-    if (this.life == DEAD) return;
-
-    // Initialization
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.ang);
-
-    // Draws animation deatch
-    if (this.life == DYING) {
-      const c = this.deathAnimationCounter;
-      const ptclAmount = 5;
-      const angle = _2PI / ptclAmount;
-
-      for (let i = 0; i < ptclAmount; i++) {
-        ctx.fillRect(
-          c * Math.cos(angle * i) + randomInt(-1, 1),
-          c * Math.sin(angle * i) + randomInt(-1, 1),
-          4,
-          4
-        );
-      }
-    }
-
-    // Draw path
-    else {
-      ctx.beginPath();
-      ctx.moveTo(30, 0);
-      ctx.lineTo(-15, -15);
-      ctx.lineTo(-10, 0);
-      ctx.lineTo(-15, 15);
-      ctx.closePath();
-      ctx.stroke();
-
-      // Draws "fire"
-      if (this.mov) {
-        ctx.beginPath();
-        ctx.moveTo(-13, -10);
-        ctx.lineTo(-25, 0);
-        ctx.lineTo(-13, 10);
-        ctx.stroke();
-      }
-    }
-    // Restore
-    ctx.restore();
+    this.beforeDestroyAnimation = () => {};
+    this.afterDestroyAnimation = () => {};
+    this.setState(PLAYER_STATES.ALIVE_STATE);
   }
 
   /**
@@ -138,19 +91,44 @@ export class Player extends Entity {
    * @param {[Number, Number, Number, Number]} commands
    */
   update(dt, commands) {
-    // Life logic
-    if (this.life == DEAD) return;
-    // DYING duration
-    else if (this.life == DYING) {
-      this.deathAnimationCounter += 0.05 * dt;
-      if (this.deathAnimationCounter > 30) this.life = DEAD;
-      return;
-    }
+    this.stateTimeCounter += 0.05 * dt;
+    this.state.update(this, dt, commands);
+  }
 
+  /**
+   * Main player's drawing function
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(ctx) {
+    // Initialization
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.ang);
+
+    // Executes render based on the current state
+    this.state.render(this, ctx);
+
+    // Restore
+    ctx.restore();
+  }
+
+  /**
+   * Handles collision
+   */
+  collision() {
+    this.state.collision(this);
+  }
+
+  /**
+   * Moves shipt based on it's parameters
+   * @param {Number} dt
+   * @param {[Number, Number, Number, Number]} commands
+   */
+  move(dt, commands) {
     if (commands[COMMAND_ENUM.LEFT]) this.setAngle(this.ang - 0.005 * dt);
     if (commands[COMMAND_ENUM.RIGHT]) this.setAngle(this.ang + 0.005 * dt);
 
-    // Movimentation
+    // Move
     if (commands[COMMAND_ENUM.FORWARDS]) this.mov = true;
     else this.mov = false;
 
@@ -166,19 +144,125 @@ export class Player extends Entity {
   }
 
   /**
-   * Kills Player
+   * Draws ship on canvas. It expects that the cursor is on center of where ship is, as well as is rotated in the correct angle.
+   * @param {CanvasRenderingContext2D} ctx
    */
-  die() {
-    this.life = DYING;
+  drawShip(ctx) {
+    ctx.beginPath();
+    ctx.moveTo(30, 0);
+    ctx.lineTo(-15, -15);
+    ctx.lineTo(-10, 0);
+    ctx.lineTo(-15, 15);
+    ctx.closePath();
+    ctx.stroke();
+
+    // Draws "fire"
+    if (this.mov) {
+      ctx.beginPath();
+      ctx.moveTo(-13, -10);
+      ctx.lineTo(-25, 0);
+      ctx.lineTo(-13, 10);
+      ctx.stroke();
+    }
   }
 
   /**
-   * Resets player
+   * Reborn player
    */
-  reset() {
-    this.init();
+  respawn() {
+    this.setState(PLAYER_STATES.RESPAWN_STATE);
+
+    this.x = VIRTUAL.w / 2;
+    this.y = VIRTUAL.h / 2;
+    this.vx = 0;
+    this.vy = 0;
+    this.ang = -_2PI / 4;
+    this.mov = false;
+  }
+
+  /**
+   * Changes state
+   * @param {{ update: Function, render: Function, collision: Function }} next
+   */
+  setState(next) {
+    this.state = next;
+    this.stateTimeCounter = 0;
   }
 }
+
+/**
+ * Possible player states
+ */
+const PLAYER_STATES = {
+  ALIVE_STATE: {
+    update(player, dt, commands) {
+      player.move(dt, commands);
+    },
+
+    render(player, ctx) {
+      player.drawShip(ctx);
+    },
+    collision(player) {
+      player.beforeDestroyAnimation();
+      player.setState(PLAYER_STATES.DYING_STATE);
+    },
+  },
+
+  DYING_STATE: {
+    update(player) {
+      if (player.stateTimeCounter > 30) {
+        player.setState(PLAYER_STATES.WAITING_STATE);
+      }
+    },
+
+    render(player, ctx) {
+      const c = player.stateTimeCounter;
+      const ptclAmount = 5;
+      const angle = _2PI / ptclAmount;
+
+      for (let i = 0; i < ptclAmount; i++) {
+        ctx.fillRect(
+          c * Math.cos(angle * i) + randomInt(-1, 1),
+          c * Math.sin(angle * i) + randomInt(-1, 1),
+          4,
+          4
+        );
+      }
+    },
+    collision() {},
+  },
+
+  WAITING_STATE: {
+    render() {},
+    update(player) {
+      if (player.stateTimeCounter > 30) {
+        player.setState(PLAYER_STATES.DEAD_STATE);
+        player.afterDestroyAnimation();
+      }
+    },
+    collision() {},
+  },
+
+  RESPAWN_STATE: {
+    render(player, ctx) {
+      if ((player.stateTimeCounter / 10).toFixed(0) % 3 == 0) {
+        player.drawShip(ctx);
+      }
+    },
+    update(player) {
+      if (player.stateTimeCounter > 100) {
+        player.setState(PLAYER_STATES.ALIVE_STATE);
+      }
+    },
+    collision() {},
+  },
+
+  DEAD_STATE: {
+    render() {},
+    update() {},
+    collision() {},
+  },
+};
 
 /**
  * Asteroid base class

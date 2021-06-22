@@ -26,9 +26,11 @@ class Renderer {
 
   /**
    * Renders state on canvas
-   * @param {lifes: Number, score: Number, seconds: Number, player: Player, asteroids: Asteroid[]} state
+   * @param {life_count: Number, score: Number, seconds: Number, player: Player, asteroids: Asteroid[]} state
    */
   render(state) {
+    if (state.seconds < 10) state.seconds = "0" + state.seconds;
+
     this.clear();
 
     // Renders score
@@ -36,7 +38,7 @@ class Renderer {
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "end";
     this.ctx.fillText(
-      `LIFES: ${state.lifes}   SCORE: ${state.score}   TIME: ${state.seconds}`,
+      `LIFE: ${state.life_count}   SCORE: ${state.score}   TIME: ${state.seconds}`,
       this.cvW - 20,
       40
     );
@@ -47,8 +49,10 @@ class Renderer {
     // Scales size
     this.ctx.save();
     this.ctx.scale(this.ratio, this.ratio);
-    state.player.draw(this.ctx);
+
     state.asteroids.forEach((a) => a.draw(this.ctx));
+    if (state.player.render) state.player.draw(this.ctx);
+
     this.ctx.restore();
   }
 
@@ -79,7 +83,7 @@ class Renderer {
   }
 
   /**
-   * Ends redering
+   * Ends rendering
    */
   end() {
     window.removeEventListener("resize", this.screenResize);

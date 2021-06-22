@@ -7,10 +7,12 @@ export default {
     h: 700,
     w: 700 * 1.618,
   },
-  LIFES: 3,
+  INIt_LIFE_COUNT: 3,
   LIFE_STATES: {
     ALIVE: 1,
     DYING: 2,
     DEAD: 3,
+    WAITING: 4,
+    RESPAWN: 5,
   },
 };

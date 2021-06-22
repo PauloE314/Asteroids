@@ -5,7 +5,7 @@ import { Asteroid, Player } from "./Entities.js";
 import { handleErr } from "./errors.js";
 import { getDistance } from "../utils/math.js";
 
-const { LIFES, FRM_RATE, LIFE_STATES } = SETTINGS;
+const { INIt_LIFE_COUNT, FRM_RATE } = SETTINGS;
 
 export default class Game {
   renderer = new Renderer();
@@ -15,11 +15,11 @@ export default class Game {
   /**
    * Initialize dependencies
    * @param {Number} platform
-   * @param {HTMLSpanElement} htmlErrorELement
+   * @param {HTMLSpanElement} htmlErrorElement
    */
-  init(platform, htmlErrorELement) {
+  init(platform, htmlErrorElement) {
     this.platform = platform;
-    this.htmlErrorElement = htmlErrorELement;
+    this.htmlErrorElement = htmlErrorElement;
     this.frameId = null;
 
     this.renderer.init();
@@ -27,6 +27,13 @@ export default class Game {
 
     this.player = new Player();
     this.player.init();
+
+    // Handle player collisions
+    this.player.beforeDestroyAnimation = () => this.life_count--;
+    this.player.afterDestroyAnimation = () => {
+      if (this.life_count > 0) this.player.respawn();
+      else this.gameOver();
+    };
 
     this.asteroids = [];
     for (let i = 0; i < 1; i++) {
@@ -40,7 +47,7 @@ export default class Game {
     }
 
     this.score = 0;
-    this.lifes = LIFES;
+    this.life_count = INIt_LIFE_COUNT;
     this.time = {
       dt: 0,
       last: 0,
@@ -67,7 +74,7 @@ export default class Game {
 
         // Renders everything
         this.renderer.render({
-          lifes: this.lifes,
+          life_count: this.life_count,
           score: this.score,
           seconds: ((Date.now() - this.time.start) / 1000).toFixed(0),
           player: this.player,
@@ -75,15 +82,16 @@ export default class Game {
         });
 
         // Checks for collisions
-        if (this.player.life == LIFE_STATES.ALIVE)
-          this.asteroids.forEach((aasteroid) => {
-            const dis = getDistance(aasteroid, this.player);
-            if (dis < (aasteroid.radius + this.player.radius) * 0.8) {
-              this.player.die();
-              this.lifes--;
-              // this.end();
-            }
-          });
+        this.player.isColliding = false;
+        this.asteroids.forEach((ast) => {
+          const dis = getDistance(ast, this.player);
+          const maxDis = (this.player.radius + ast.radius) * 0.8;
+
+          // Collision
+          if (dis < maxDis) {
+            this.player.collision();
+          }
+        });
       }
     } catch (err) {
       handleErr(this, this.htmlErrorElement, err.message);
@@ -91,9 +99,12 @@ export default class Game {
   }
 
   /**
-   * Resets initial configurations and listenners
+   * Handles zero life count
    */
-  reset() {}
+  gameOver() {
+    this.end();
+    alert("Game Over");
+  }
 
   /**
    * Stops game
