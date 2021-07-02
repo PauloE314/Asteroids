@@ -1,9 +1,10 @@
-import SETTINGS from "../settings.js";
-import Renderer from "./Renderer.js";
-import { KeyboardControl } from "./Control.js";
-import { Asteroid, Player } from "./Entities.js";
-import { handleErr } from "./errors.js";
-import { getDistance } from "../utils/math.js";
+import SETTINGS from "./core/settings.js";
+import Renderer from "./core/Renderer.js";
+import { KeyboardControl } from "./core/Control.js";
+import Asteroid from "./entities/Asteroid.js";
+import Player from "./entities/Player.js";
+import { handleErr } from "./core/errors.js";
+import { getDistance } from "./utils/math.js";
 
 const { INIt_LIFE_COUNT, FRM_RATE } = SETTINGS;
 
@@ -89,12 +90,13 @@ export default class Game {
 
           // Collision
           if (dis < maxDis) {
-            this.player.collision();
+            this.player.collision(ast);
           }
         });
       }
     } catch (err) {
-      handleErr(this, this.htmlErrorElement, err.message);
+      console.log(err);
+      // handleErr(this, this.htmlErrorElement, err.message);
     }
   }
 

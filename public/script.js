@@ -1,5 +1,5 @@
-import Game from "../src/core/Game.js";
-import SETTINGS from "../src/settings.js";
+import Game from "../src/Game.js";
+import SETTINGS from "../src/core/settings.js";
 import { handleErr } from "../src/core/errors.js";
 import { getPlatform } from "../src/utils/index.js";
 

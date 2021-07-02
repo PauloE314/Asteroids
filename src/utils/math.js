@@ -1,3 +1,6 @@
+// CONSTANTS
+export const _2PI = Math.PI * 2;
+
 /**
  * @param {Number} n
  */

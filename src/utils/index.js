@@ -1,4 +1,4 @@
-import SETTINGS from "../settings.js";
+import SETTINGS from "../core/settings.js";
 
 const { PLATFORMS } = SETTINGS;
 
