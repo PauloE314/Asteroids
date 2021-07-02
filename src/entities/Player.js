@@ -1,12 +1,15 @@
-import Entity from "./Entities.js";
+import Entity, { EntityState } from "./Entities.js";
 import SETTINGS from "../core/settings.js";
 import { COMMAND_ENUM } from "../core/Control.js";
 import { _2PI, randomInt } from "../utils/math.js";
 
 const { VIRTUAL } = SETTINGS;
+const ptclAmount = 5;
 
 /**
  * Player base class
+ *
+ * @typedef {[Number, Number, Number, Number]} Command
  */
 export default class Player extends Entity {
   init() {
@@ -23,35 +26,18 @@ export default class Player extends Entity {
     this.beforeDestroyAnimation = () => {};
     this.afterDestroyAnimation = () => {};
 
-    this.setState(PLAYER_STATES.ALIVE_STATE);
+    this.setState(ALIVE_STATE);
   }
 
   /**
    * @param {Number} dt
-   * @param {[Number, Number, Number, Number]} commands
+   * @param {Command} commands
    */
   update(dt, commands) {
     this.counters.stateChange += 0.05 * dt;
     this.counters.collision += 0.05 * dt;
 
     super.update(dt, commands);
-  }
-
-  /**
-   * Main player's drawing function
-   * @param {CanvasRenderingContext2D} ctx
-   */
-  draw(ctx) {
-    // Initialization
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.ang);
-
-    // Executes render based on the current state
-    this.state.draw(this, ctx);
-
-    // Restore
-    ctx.restore();
   }
 
   /**
@@ -65,7 +51,7 @@ export default class Player extends Entity {
   /**
    * Moves shipt based on it's parameters
    * @param {Number} dt
-   * @param {[Number, Number, Number, Number]} commands
+   * @param {Command} commands
    */
   move(dt, commands) {
     if (commands[COMMAND_ENUM.LEFT]) this.setAngle(this.ang - 0.005 * dt);
@@ -113,7 +99,7 @@ export default class Player extends Entity {
    * Reborn player
    */
   respawn() {
-    this.setState(PLAYER_STATES.RESPAWN_STATE);
+    this.setState(RESPAWN_STATE);
 
     this.x = VIRTUAL.w / 2;
     this.y = VIRTUAL.h / 2;
@@ -125,7 +111,7 @@ export default class Player extends Entity {
 
   /**
    * Changes state
-   * @param {{ update: Function, render: Function, collision: Function }} next
+   * @param {Object} next
    */
   setState(next) {
     this.state = next;
@@ -136,72 +122,98 @@ export default class Player extends Entity {
 /**
  * Possible player states
  */
-const PLAYER_STATES = {
-  ALIVE_STATE: {
-    update(player, dt, commands) {
-      player.move(dt, commands);
-    },
-    draw(player, ctx) {
+const ALIVE_STATE = new EntityState({
+  /**
+   * @param {Player} player
+   * @param {Number} dt
+   * @param {Command} commands
+   */
+  update: (player, dt, commands) => player.move(dt, commands),
+
+  /**
+   * @param {Player} player
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(player, ctx) {
+    player.drawShip(ctx);
+  },
+
+  /**
+   * @param {Player} player
+   * @param {Entity} entity
+   */
+  collision(player, entity) {
+    player.beforeDestroyAnimation();
+    player.setState(DYING_STATE);
+  },
+});
+
+const DYING_STATE = new EntityState({
+  /**
+   * @param {Player} player
+   * @param {Number} dt
+   * @param {Command} commands
+   */
+  update(player) {
+    if (player.counters.stateChange > 30) {
+      player.setState(WAITING_STATE);
+    }
+  },
+
+  /**
+   * @param {Player} player
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(player, ctx) {
+    const c = player.counters.stateChange;
+    const angle = _2PI / ptclAmount;
+
+    for (let i = 0; i < ptclAmount; i++) {
+      ctx.fillRect(
+        c * Math.cos(angle * i) + randomInt(-1, 1),
+        c * Math.sin(angle * i) + randomInt(-1, 1),
+        4,
+        4
+      );
+    }
+  },
+});
+
+const WAITING_STATE = new EntityState({
+  /**
+   * @param {Player} player
+   * @param {Number} dt
+   * @param {Command} commands
+   */
+  update(player, dt, commands) {
+    if (player.counters.stateChange > 30) {
+      player.setState(DEAD_STATE);
+      player.afterDestroyAnimation();
+    }
+  },
+});
+
+const RESPAWN_STATE = new EntityState({
+  /**
+   * @param {Player} player
+   * @param {Number} dt
+   * @param {Command} commands
+   */
+  update(player, dt, commands) {
+    if (player.counters.stateChange > 100 && player.counters.collision > 20)
+      player.setState(ALIVE_STATE);
+    else player.move(dt, commands);
+  },
+
+  /**
+   * @param {Player} player
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(player, ctx) {
+    if ((player.counters.stateChange / 10).toFixed(0) % 3 == 0) {
       player.drawShip(ctx);
-    },
-    collision(player, entity) {
-      player.beforeDestroyAnimation();
-      player.setState(PLAYER_STATES.DYING_STATE);
-    },
+    }
   },
+});
 
-  DYING_STATE: {
-    update(player) {
-      if (player.counters.stateChange > 30) {
-        player.setState(PLAYER_STATES.WAITING_STATE);
-      }
-    },
-
-    draw(player, ctx) {
-      const c = player.counters.stateChange;
-      const ptclAmount = 5;
-      const angle = _2PI / ptclAmount;
-
-      for (let i = 0; i < ptclAmount; i++) {
-        ctx.fillRect(
-          c * Math.cos(angle * i) + randomInt(-1, 1),
-          c * Math.sin(angle * i) + randomInt(-1, 1),
-          4,
-          4
-        );
-      }
-    },
-    collision(player, entity) {},
-  },
-
-  WAITING_STATE: {
-    draw(player, ctx) {},
-    update(player, dt, commands) {
-      if (player.counters.stateChange > 30) {
-        player.setState(PLAYER_STATES.DEAD_STATE);
-        player.afterDestroyAnimation();
-      }
-    },
-    collision(player, entity) {},
-  },
-
-  RESPAWN_STATE: {
-    draw(player, ctx) {
-      if ((player.counters.stateChange / 10).toFixed(0) % 3 == 0) {
-        player.drawShip(ctx);
-      }
-    },
-    update(player, dt, commands) {
-      if (player.counters.stateChange > 100 && player.counters.collision > 20)
-        player.setState(PLAYER_STATES.ALIVE_STATE);
-      else player.move(dt, commands);
-    },
-    collision(player, entity) {},
-  },
-
-  DEAD_STATE: {
-    draw(player, ctx) {},
-    update(player, dt, commands) {},
-    collision(player, entity) {},
-  },
-};
+const DEAD_STATE = new EntityState();

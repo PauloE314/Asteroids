@@ -52,8 +52,8 @@ class Renderer {
     this.ctx.save();
     this.ctx.scale(this.ratio, this.ratio);
 
-    state.asteroids.forEach((a) => a.draw(this.ctx));
-    if (state.player.draw) state.player.draw(this.ctx);
+    state.asteroids.forEach((a) => a.render(this.ctx));
+    state.player.render(this.ctx);
 
     this.ctx.restore();
   }

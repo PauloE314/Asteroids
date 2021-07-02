@@ -19,7 +19,6 @@ export default class Entity {
     this.vy = 0;
     this.radius = 30;
     this.ang = 0; // Inclination angle
-    this.render = true;
 
     // Empty state
     this.state = {
@@ -30,11 +29,20 @@ export default class Entity {
   }
 
   /**
-   * Draws entity
+   * Renders entity in the canvas screen. It calls directly the entity's "draw" method.
    * @param {CanvasRenderingContext2D} ctx
    */
-  draw(ctx, ...args) {
-    this.state.draw(this, ctx, ...args);
+  render(ctx, ...args) {
+    // Initialization
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.ang);
+
+    // Draws entity
+    this.draw(ctx, ...args);
+
+    // Restore
+    ctx.restore();
   }
 
   /**
@@ -43,6 +51,14 @@ export default class Entity {
    */
   update(dt, ...args) {
     this.state.update(this, dt, ...args);
+  }
+
+  /**
+   * Draws entity
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(ctx, ...args) {
+    this.state.draw(this, ctx, ...args);
   }
 
   /**
@@ -86,4 +102,38 @@ export default class Entity {
   setState(next) {
     this.state = next;
   }
+}
+
+/**
+ * Entity's base state
+ */
+export class EntityState {
+  /**
+   * @param {{ update: Function, draw: Function, collision: Function }} override
+   */
+  constructor(override) {
+    if (override) {
+      this.update = override.update || this.update;
+      this.draw = override.draw || this.draw;
+      this.collision = override.collision || this.collision;
+    }
+  }
+
+  /**
+   * @param {Entity} entity
+   * @param {Number} dt
+   */
+  update(entity, dt) {}
+
+  /**
+   * @param {Entity} entity
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(entity, ctx) {}
+
+  /**
+   * @param {Entity} entity
+   * @param {Entity} collided
+   */
+  collision(entity, collided) {}
 }

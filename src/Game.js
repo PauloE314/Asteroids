@@ -43,7 +43,7 @@ export default class Game {
 
       this.asteroids[i].vx = 0;
       this.asteroids[i].vy = 0;
-      this.asteroids[i].x = 500;
+      this.asteroids[i].x = 400;
       this.asteroids[i].y = 250;
     }
 

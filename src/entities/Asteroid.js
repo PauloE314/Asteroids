@@ -1,6 +1,6 @@
-import Entity from "./Entities.js";
+import Entity, { EntityState } from "./Entities.js";
 import SETTINGS from "../core/settings.js";
-import { random, randomInt } from "../utils/math.js";
+import { random, randomInt, _2PI } from "../utils/math.js";
 
 const { VIRTUAL } = SETTINGS;
 
@@ -14,7 +14,7 @@ export default class Asteroid extends Entity {
   init() {
     super.init();
 
-    this.size = randomInt(1, 2); // 2 - big, 1 - medium, - 0 small
+    this.size = randomInt(0, 2); // 2 - big, 1 - medium, - 0 small
     this.radius = 25 * Math.pow(2, this.size);
 
     this.x = random(0, VIRTUAL.w);
@@ -25,59 +25,75 @@ export default class Asteroid extends Entity {
 
     this.dots = ASTEROID_DOT_PATHS["smb".charAt(this.size)][randomInt(0, 2)];
 
-    this.setState(ASTEROID_STATES.ALIVE);
+    this.setState(ALIVE_STATE);
   }
 }
 
 /**
  * Possible asteroid states
  */
-const ASTEROID_STATES = {
-  ALIVE: {
-    /**
-     * @param {Asteroid} asteroid
-     * @param {Number} dt
-     */
-    update(asteroid, dt) {
-      asteroid.setAngle(asteroid.ang + dt * asteroid.vr * 0.00005);
-      asteroid.move(dt);
-    },
-
-    /**
-     * @param {Asteroid} asteroid
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    draw(asteroid, ctx) {
-      // Initialization
-      ctx.save();
-      ctx.translate(asteroid.x, asteroid.y);
-      ctx.rotate(asteroid.ang);
-
-      // Draw path
-      ctx.strokeStyle = "white";
-      ctx.beginPath();
-      ctx.moveTo(asteroid.dots[0][0], asteroid.dots[0][1]);
-      for (let i = 1; i < 7; i++)
-        ctx.lineTo(asteroid.dots[i][0], asteroid.dots[i][1]);
-      ctx.closePath();
-      ctx.stroke();
-
-      // Restore
-      ctx.restore();
-    },
-
-    /**
-     * @param {Asteroid} asteroid
-     * @param {Entity} collided
-     */
-    collision(asteroid, collided) {},
+const ALIVE_STATE = new EntityState({
+  /**
+   * @param {Asteroid} asteroid
+   * @param {Number} dt
+   */
+  update(asteroid, dt) {
+    asteroid.setAngle(asteroid.ang + dt * asteroid.vr * 0.00005);
+    asteroid.move(dt);
   },
-};
+
+  /**
+   * @param {Asteroid} asteroid
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(asteroid, ctx) {
+    // Draw path
+    ctx.strokeStyle = "white";
+    ctx.beginPath();
+    ctx.moveTo(asteroid.dots[0][0], asteroid.dots[0][1]);
+    for (let i = 1; i < 7; i++)
+      ctx.lineTo(asteroid.dots[i][0], asteroid.dots[i][1]);
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.beginPath();
+    ctx.arc(0, 0, asteroid.radius, 0, _2PI);
+    ctx.stroke();
+  },
+});
 
 // Asteroids paths (always have 6 dots)
 const ASTEROID_DOT_PATHS = {
   s: [
     // 25 radius
+    [
+      [0, -20],
+      [20, -12],
+      [18, 0],
+      [10, 26],
+      [-15, 8],
+      [-24, 7],
+      [-20, -20],
+    ],
+    [
+      [12, -24],
+      [22, -10],
+      [18, 20],
+      [10, 26],
+      [-15, 8],
+      [-0, 7],
+      [-18, -18],
+    ],
+    [
+      [20, -15],
+      [25, 10],
+      [10, 12],
+      [10, 26],
+      [-9, 8],
+      [-24, 7],
+      [-20, -20],
+    ],
   ],
   m: [
     // 50 radius
