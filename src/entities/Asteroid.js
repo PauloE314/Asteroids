@@ -2,12 +2,13 @@ import Entity, { EntityState } from "./Entities.js";
 import SETTINGS from "../core/settings.js";
 import { random, randomInt, _2PI } from "../utils/math.js";
 
-const { VIRTUAL } = SETTINGS;
+const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
 
 /**
  * Asteroid base class
  */
 export default class Asteroid extends Entity {
+  type = ENTITY_TYPES.ASTEROID;
   vr = 0;
   dots = [];
 

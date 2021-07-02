@@ -1,12 +1,14 @@
 import SETTINGS from "../core/settings.js";
 import { _2PI } from "../utils/math.js";
 
-const { VIRTUAL } = SETTINGS;
+const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
 
 /**
  * Base entity class
  */
 export default class Entity {
+  type = ENTITY_TYPES.DEFAULT;
+
   onDie = function () {};
 
   /**

@@ -3,7 +3,7 @@ import SETTINGS from "../core/settings.js";
 import { COMMAND_ENUM } from "../core/Control.js";
 import { _2PI, randomInt } from "../utils/math.js";
 
-const { VIRTUAL } = SETTINGS;
+const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
 const ptclAmount = 5;
 
 /**
@@ -12,6 +12,8 @@ const ptclAmount = 5;
  * @typedef {[Number, Number, Number, Number]} Command
  */
 export default class Player extends Entity {
+  type = ENTITY_TYPES.PLAYER;
+
   init() {
     super.init();
 
