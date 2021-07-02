@@ -1,6 +1,8 @@
 import SETTINGS from "./settings.js";
 import Player from "../entities/Player.js";
 import Asteroid from "../entities/Asteroid.js";
+import Fire from "../entities/Fire.js";
+import Entity from "../entities/Entities.js";
 
 const { VIRTUAL } = SETTINGS;
 
@@ -28,7 +30,7 @@ class Renderer {
 
   /**
    * Renders state on canvas
-   * @param {{life_count: Number, score: Number, seconds: Number, player: Player, asteroids: Asteroid[]}} state
+   * @param {{life_count: Number, score: Number, seconds: Number, entities: Entity[] } state
    */
   render(state) {
     if (state.seconds < 10) state.seconds = "0" + state.seconds;
@@ -51,10 +53,7 @@ class Renderer {
     // Scales size
     this.ctx.save();
     this.ctx.scale(this.ratio, this.ratio);
-
-    state.asteroids.forEach((a) => a.render(this.ctx));
-    state.player.render(this.ctx);
-
+    state.entities.forEach((a) => a.render(this.ctx));
     this.ctx.restore();
   }
 

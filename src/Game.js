@@ -5,6 +5,7 @@ import Asteroid from "./entities/Asteroid.js";
 import Player from "./entities/Player.js";
 import { handleErr } from "./core/errors.js";
 import { getDistance } from "./utils/math.js";
+import Fire from "./entities/Fire.js";
 
 const { INIt_LIFE_COUNT, FRM_RATE } = SETTINGS;
 
@@ -36,6 +37,7 @@ export default class Game {
       else this.gameOver();
     };
 
+    // Asteroids
     this.asteroids = [];
     for (let i = 0; i < 1; i++) {
       this.asteroids.push(new Asteroid());
@@ -46,6 +48,10 @@ export default class Game {
       this.asteroids[i].x = 400;
       this.asteroids[i].y = 250;
     }
+
+    // TEST
+    this.fire = new Fire();
+    this.fire.init(0);
 
     this.score = 0;
     this.life_count = INIt_LIFE_COUNT;
@@ -72,14 +78,14 @@ export default class Game {
         this.time.last = time;
         this.player.update(this.time.dt, this.controller.commands);
         this.asteroids.forEach((a) => a.update(this.time.dt));
+        this.fire.update(this.time.dt);
 
         // Renders everything
         this.renderer.render({
           life_count: this.life_count,
           score: this.score,
           seconds: ((Date.now() - this.time.start) / 1000).toFixed(0),
-          player: this.player,
-          asteroids: this.asteroids,
+          entities: [this.player, this.fire, ...this.asteroids],
         });
 
         // Checks for collisions

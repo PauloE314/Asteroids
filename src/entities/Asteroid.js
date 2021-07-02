@@ -28,6 +28,11 @@ export default class Asteroid extends Entity {
 
     this.setState(ALIVE_STATE);
   }
+
+  /**
+   * Kills asteroid
+   */
+  kill() {}
 }
 
 /**
