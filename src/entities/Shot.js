@@ -4,21 +4,20 @@ import Entity from "./Entities.js";
 
 const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
 
-export default class Fire extends Entity {
+export default class Shot extends Entity {
   type = ENTITY_TYPES.FIRE;
 
   /**
    * @param {Number} ang
    */
-  init(ang) {
+  init(ang, x, y, speed) {
     super.init();
 
     this.ang = ang;
-    this.x = VIRTUAL.w / 2;
-    this.y = VIRTUAL.h / 2;
-    this.vx = Math.cos(ang) * 20;
-    this.vy = Math.sin(ang) * 20;
-    // this.v = Math.sin(ang);
+    this.x = x;
+    this.y = y;
+    this.vy = Math.sin(ang) * speed;
+    this.vx = Math.cos(ang) * speed;
     this.radius = 2;
     this.state = null; // No need for state logic
   }
@@ -29,14 +28,6 @@ export default class Fire extends Entity {
   update(dt) {
     this.y += this.vy * dt * 0.015;
     this.x += this.vx * dt * 0.015;
-
-    // KILL X
-    if (this.x >= VIRTUAL.w + this.radius) this.x = 0;
-    else if (this.x < -this.radius) this.x = VIRTUAL.w;
-
-    // KILL Y
-    if (this.y >= VIRTUAL.h + this.radius) this.y = 0;
-    else if (this.y < -this.radius) this.y = VIRTUAL.h;
   }
 
   /**
@@ -46,9 +37,4 @@ export default class Fire extends Entity {
     ctx.fillStyle = "white";
     ctx.fillRect(-this.radius, -this.radius, this.radius * 2, this.radius * 2);
   }
-
-  /**
-   * Kills fire
-   */
-  kill() {}
 }

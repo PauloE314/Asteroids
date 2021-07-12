@@ -1,7 +1,6 @@
 import SETTINGS from "./settings.js";
 import Player from "../entities/Player.js";
 import Asteroid from "../entities/Asteroid.js";
-import Fire from "../entities/Fire.js";
 import Entity from "../entities/Entities.js";
 
 const { VIRTUAL } = SETTINGS;

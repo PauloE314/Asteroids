@@ -51,25 +51,19 @@ export default class Entity {
    * Updates entity's current state
    * @param {number} dt
    */
-  update(dt, ...args) {
-    this.state.update(this, dt, ...args);
-  }
+  update(dt, ...args) {}
 
   /**
    * Draws entity
    * @param {CanvasRenderingContext2D} ctx
    */
-  draw(ctx, ...args) {
-    this.state.draw(this, ctx, ...args);
-  }
+  draw(ctx, ...args) {}
 
   /**
    * Handles the entity collision
    * @param {Object} collided The element that collided with the entity
    */
-  collision(collided, ...args) {
-    this.state.collision(this, collided, ...args);
-  }
+  collision(collided, ...args) {}
 
   /**
    * Default entity update, common for all entities
@@ -95,14 +89,6 @@ export default class Entity {
    */
   setAngle(n) {
     this.ang = n > _2PI ? n - _2PI : n;
-  }
-
-  /**
-   * Sets entity's next state
-   * @param {Object} next
-   */
-  setState(next) {
-    this.state = next;
   }
 }
 

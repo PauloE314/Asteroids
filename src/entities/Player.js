@@ -1,4 +1,5 @@
 import Entity, { EntityState } from "./Entities.js";
+import Shot from "./Shot.js";
 import SETTINGS from "../core/settings.js";
 import { COMMAND_ENUM } from "../core/Control.js";
 import { _2PI, randomInt } from "../utils/math.js";
@@ -17,6 +18,8 @@ export default class Player extends Entity {
   init() {
     super.init();
 
+    this.shots = [];
+    this.shotting = false;
     this.x = VIRTUAL.w / 2;
     this.y = VIRTUAL.h / 2;
     this.mov = false;
@@ -32,6 +35,26 @@ export default class Player extends Entity {
   }
 
   /**
+   * Renders player state and shots
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  render(ctx, ...args) {
+    // Default rendering
+    super.render(ctx, ...args);
+
+    // Shots rendering
+    this.shots.forEach((shot) => shot.render(ctx));
+  }
+
+  /**
+   * Draws player in path
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(ctx) {
+    this.state.draw(this, ctx);
+  }
+
+  /**
    * @param {Number} dt
    * @param {Command} commands
    */
@@ -39,7 +62,8 @@ export default class Player extends Entity {
     this.counters.stateChange += 0.05 * dt;
     this.counters.collision += 0.05 * dt;
 
-    super.update(dt, commands);
+    this.state.update(this, dt, commands);
+    this.shots.forEach((shot) => shot.update(dt));
   }
 
   /**
@@ -47,7 +71,7 @@ export default class Player extends Entity {
    */
   collision(entity) {
     this.counters.collision = 0;
-    super.collision(this, entity);
+    this.state.collision(this, entity);
   }
 
   /**
@@ -130,7 +154,28 @@ const ALIVE_STATE = new EntityState({
    * @param {Number} dt
    * @param {Command} commands
    */
-  update: (player, dt, commands) => player.move(dt, commands),
+  update: (player, dt, commands) => {
+    player.move(dt, commands);
+
+    // Fire logic
+    if (commands[COMMAND_ENUM.FIRE]) {
+      if (!player.shotting) {
+        player.shotting = true;
+
+        const shot = new Shot();
+        const initialX = player.x + Math.cos(player.ang) * 30;
+        const initialY = player.y + Math.sin(player.ang) * 30;
+        const speed =
+          Math.sqrt(Math.pow(player.vy, 2) + Math.pow(player.vx, 2)) * 0.9 + 15;
+
+        shot.init(player.ang, initialX, initialY, speed);
+
+        player.shots.push(shot);
+      }
+    }
+    // Resets fire
+    else player.shotting = false;
+  },
 
   /**
    * @param {Player} player

@@ -5,9 +5,9 @@ import Asteroid from "./entities/Asteroid.js";
 import Player from "./entities/Player.js";
 import { handleErr } from "./core/errors.js";
 import { getDistance } from "./utils/math.js";
-import Fire from "./entities/Fire.js";
+import Fire from "./entities/Shot.js";
 
-const { INIt_LIFE_COUNT, FRM_RATE } = SETTINGS;
+const { INIt_LIFE_COUNT, FRM_RATE, VIRTUAL } = SETTINGS;
 
 export default class Game {
   renderer = new Renderer();
@@ -49,10 +49,6 @@ export default class Game {
       this.asteroids[i].y = 250;
     }
 
-    // TEST
-    this.fire = new Fire();
-    this.fire.init(0);
-
     this.score = 0;
     this.life_count = INIt_LIFE_COUNT;
     this.time = {
@@ -78,17 +74,16 @@ export default class Game {
         this.time.last = time;
         this.player.update(this.time.dt, this.controller.commands);
         this.asteroids.forEach((a) => a.update(this.time.dt));
-        this.fire.update(this.time.dt);
 
         // Renders everything
         this.renderer.render({
           life_count: this.life_count,
           score: this.score,
           seconds: ((Date.now() - this.time.start) / 1000).toFixed(0),
-          entities: [this.player, this.fire, ...this.asteroids],
+          entities: [this.player, ...this.asteroids],
         });
 
-        // Checks for collisions
+        // Checks player for collisions
         this.player.isColliding = false;
         this.asteroids.forEach((ast) => {
           const dis = getDistance(ast, this.player);
@@ -99,6 +94,20 @@ export default class Game {
             this.player.collision(ast);
           }
         });
+
+        // Handles shots out-of-screen
+        const inScreenShots = [];
+        this.player.shots.forEach((shot) => {
+          if (
+            shot.x < VIRTUAL.w &&
+            shot.x > 0 &&
+            shot.y < VIRTUAL.h &&
+            shot.y > 0
+          ) {
+            inScreenShots.push(shot);
+          }
+        });
+        this.player.shots = inScreenShots;
       }
     } catch (err) {
       console.log(err);

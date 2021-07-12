@@ -21,6 +21,7 @@ export class KeyboardControl extends Control {
     KeyA: COMMAND_ENUM.LEFT,
     KeyD: COMMAND_ENUM.RIGHT,
     KeyW: COMMAND_ENUM.FORWARDS,
+    Space: COMMAND_ENUM.FIRE,
   };
 
   /**

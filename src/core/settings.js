@@ -12,6 +12,6 @@ export default {
     DEFAULT: null,
     PLAYER: 0,
     ASTEROID: 1,
-    FIRE: 2,
+    SHOT: 2,
   },
 };
