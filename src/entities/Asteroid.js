@@ -1,4 +1,4 @@
-import Entity, { EntityState } from "./Entities.js";
+import Entity from "./Entities.js";
 import SETTINGS from "../core/settings.js";
 import { random, randomInt, _2PI } from "../utils/math.js";
 
@@ -53,6 +53,13 @@ export default class Asteroid extends Entity {
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, _2PI);
     ctx.stroke();
+  }
+
+  /**
+   * Handles shot collision
+   */
+  shotCollision() {
+    console.log("SHOT");
   }
 }
 

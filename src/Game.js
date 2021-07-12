@@ -3,9 +3,7 @@ import Renderer from "./core/Renderer.js";
 import { KeyboardControl } from "./core/Control.js";
 import Asteroid from "./entities/Asteroid.js";
 import Player from "./entities/Player.js";
-import { handleErr } from "./core/errors.js";
 import { getDistance } from "./utils/math.js";
-import Fire from "./entities/Shot.js";
 
 const { INIt_LIFE_COUNT, FRM_RATE, VIRTUAL } = SETTINGS;
 
@@ -83,36 +81,49 @@ export default class Game {
           entities: [this.player, ...this.asteroids],
         });
 
-        // Checks player for collisions
-        this.player.isColliding = false;
-        this.asteroids.forEach((ast) => {
-          const dis = getDistance(ast, this.player);
-          const maxDis = (this.player.radius + ast.radius) * 0.8;
-
-          // Collision
-          if (dis < maxDis) {
-            this.player.collision(ast);
-          }
-        });
-
-        // Handles shots out-of-screen
-        const inScreenShots = [];
-        this.player.shots.forEach((shot) => {
-          if (
-            shot.x < VIRTUAL.w &&
-            shot.x > 0 &&
-            shot.y < VIRTUAL.h &&
-            shot.y > 0
-          ) {
-            inScreenShots.push(shot);
-          }
-        });
-        this.player.shots = inScreenShots;
+        // Handles collision and stuff
+        this.logic();
       }
     } catch (err) {
       console.log(err);
       // handleErr(this, this.htmlErrorElement, err.message);
     }
+  }
+
+  /**
+   * Centers the game's main operation logic
+   */
+  logic() {
+    // Checks asteroids for collisions
+    this.asteroids.forEach((ast) => {
+      const playerDistance = getDistance(ast, this.player);
+      const maxPlayerDistance = (this.player.radius + ast.radius) * 0.8;
+
+      // Player collision
+      if (playerDistance < maxPlayerDistance)
+        this.player.asteroidCollision(ast);
+
+      // Shots collision
+      this.player.shots.forEach((shot) => {
+        const shotDistance = getDistance(ast, shot);
+
+        if (shotDistance < ast.radius) ast.shotCollision();
+      });
+    });
+
+    // Handles shots out-of-screen
+    const inScreenShots = [];
+    this.player.shots.forEach((shot) => {
+      if (
+        shot.x < VIRTUAL.w &&
+        shot.x > 0 &&
+        shot.y < VIRTUAL.h &&
+        shot.y > 0
+      ) {
+        inScreenShots.push(shot);
+      }
+    });
+    this.player.shots = inScreenShots;
   }
 
   /**

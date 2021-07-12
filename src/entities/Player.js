@@ -1,4 +1,4 @@
-import Entity, { EntityState } from "./Entities.js";
+import Entity from "./Entities.js";
 import Shot from "./Shot.js";
 import SETTINGS from "../core/settings.js";
 import { COMMAND_ENUM } from "../core/Control.js";
@@ -67,11 +67,11 @@ export default class Player extends Entity {
   }
 
   /**
-   * Handles collision
+   * Handles asteroid collision
    */
-  collision(entity) {
+  asteroidCollision(entity) {
     this.counters.collision = 0;
-    this.state.collision(this, entity);
+    this.state.asteroidCollision(this, entity);
   }
 
   /**
@@ -148,7 +148,15 @@ export default class Player extends Entity {
 /**
  * Possible player states
  */
-const ALIVE_STATE = new EntityState({
+const ALIVE_STATE = {
+  /**
+   * @param {Player} player
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(player, ctx) {
+    player.drawShip(ctx);
+  },
+
   /**
    * @param {Player} player
    * @param {Number} dt
@@ -179,34 +187,15 @@ const ALIVE_STATE = new EntityState({
 
   /**
    * @param {Player} player
-   * @param {CanvasRenderingContext2D} ctx
-   */
-  draw(player, ctx) {
-    player.drawShip(ctx);
-  },
-
-  /**
-   * @param {Player} player
    * @param {Entity} entity
    */
-  collision(player, entity) {
+  asteroidCollision(player, entity) {
     player.beforeDestroyAnimation();
     player.setState(DYING_STATE);
   },
-});
+};
 
-const DYING_STATE = new EntityState({
-  /**
-   * @param {Player} player
-   * @param {Number} dt
-   * @param {Command} commands
-   */
-  update(player) {
-    if (player.counters.stateChange > 30) {
-      player.setState(WAITING_STATE);
-    }
-  },
-
+const DYING_STATE = {
   /**
    * @param {Player} player
    * @param {CanvasRenderingContext2D} ctx
@@ -224,9 +213,24 @@ const DYING_STATE = new EntityState({
       );
     }
   },
-});
 
-const WAITING_STATE = new EntityState({
+  /**
+   * @param {Player} player
+   * @param {Number} dt
+   * @param {Command} commands
+   */
+  update(player) {
+    if (player.counters.stateChange > 30) {
+      player.setState(WAITING_STATE);
+    }
+  },
+
+  asteroidCollision() {},
+};
+
+const WAITING_STATE = {
+  draw() {},
+
   /**
    * @param {Player} player
    * @param {Number} dt
@@ -238,9 +242,21 @@ const WAITING_STATE = new EntityState({
       player.afterDestroyAnimation();
     }
   },
-});
 
-const RESPAWN_STATE = new EntityState({
+  asteroidCollision() {},
+};
+
+const RESPAWN_STATE = {
+  /**
+   * @param {Player} player
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw(player, ctx) {
+    if ((player.counters.stateChange / 10).toFixed(0) % 3 == 0) {
+      player.drawShip(ctx);
+    }
+  },
+
   /**
    * @param {Player} player
    * @param {Number} dt
@@ -252,15 +268,11 @@ const RESPAWN_STATE = new EntityState({
     else player.move(dt, commands);
   },
 
-  /**
-   * @param {Player} player
-   * @param {CanvasRenderingContext2D} ctx
-   */
-  draw(player, ctx) {
-    if ((player.counters.stateChange / 10).toFixed(0) % 3 == 0) {
-      player.drawShip(ctx);
-    }
-  },
-});
+  asteroidCollision() {},
+};
 
-const DEAD_STATE = new EntityState();
+const DEAD_STATE = {
+  draw() {},
+  update() {},
+  asteroidCollision() {},
+};

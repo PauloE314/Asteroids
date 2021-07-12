@@ -21,13 +21,6 @@ export default class Entity {
     this.vy = 0;
     this.radius = 30;
     this.ang = 0; // Inclination angle
-
-    // Empty state
-    this.state = {
-      update() {},
-      draw() {},
-      collision() {},
-    };
   }
 
   /**
@@ -60,12 +53,6 @@ export default class Entity {
   draw(ctx, ...args) {}
 
   /**
-   * Handles the entity collision
-   * @param {Object} collided The element that collided with the entity
-   */
-  collision(collided, ...args) {}
-
-  /**
    * Default entity update, common for all entities
    * @param {number} dt
    */
@@ -90,38 +77,4 @@ export default class Entity {
   setAngle(n) {
     this.ang = n > _2PI ? n - _2PI : n;
   }
-}
-
-/**
- * Entity's base state
- */
-export class EntityState {
-  /**
-   * @param {{ update: Function, draw: Function, collision: Function }} override
-   */
-  constructor(override) {
-    if (override) {
-      this.update = override.update || this.update;
-      this.draw = override.draw || this.draw;
-      this.collision = override.collision || this.collision;
-    }
-  }
-
-  /**
-   * @param {Entity} entity
-   * @param {Number} dt
-   */
-  update(entity, dt) {}
-
-  /**
-   * @param {Entity} entity
-   * @param {CanvasRenderingContext2D} ctx
-   */
-  draw(entity, ctx) {}
-
-  /**
-   * @param {Entity} entity
-   * @param {Entity} collided
-   */
-  collision(entity, collided) {}
 }
