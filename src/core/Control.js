@@ -10,7 +10,7 @@ export const COMMAND_ENUM = {
  */
 export class Control {
   lastCommand = 0;
-  commands = [false, false, false, false]; // LEFT, RIGHT, FORWARDS, FIRE
+  commands = [false, false, false, false, false]; // LEFT, RIGHT, FORWARDS, FIRE
 
   init() {}
   end() {}
@@ -22,6 +22,7 @@ export class KeyboardControl extends Control {
     KeyD: COMMAND_ENUM.RIGHT,
     KeyW: COMMAND_ENUM.FORWARDS,
     Space: COMMAND_ENUM.FIRE,
+    KeyP: 4,
   };
 
   /**
@@ -32,7 +33,12 @@ export class KeyboardControl extends Control {
 
     this.onKeydown = this.onKeydown.bind(this);
     this.onKeyup = this.onKeyup.bind(this);
+  }
 
+  /**
+   * Initializes listeners
+   */
+  init() {
     document.addEventListener("keydown", this.onKeydown);
     document.addEventListener("keyup", this.onKeyup);
   }

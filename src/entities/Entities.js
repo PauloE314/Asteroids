@@ -11,31 +11,29 @@ export default class Entity {
   y = 0;
   vx = 0;
   vy = 0;
+  ang = 0;
   radius = 30;
-  ang = 0; // Inclination angle
+  visible = true;
+  alive = true;
 
   onDie = function () {};
-
-  /**
-   * Initializes the entity
-   */
-  init() {}
 
   /**
    * Renders entity in the canvas screen. It calls directly the entity's "draw" method.
    * @param {CanvasRenderingContext2D} ctx
    */
   render(ctx, ...args) {
-    // Initialization
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.ang);
+    if (this.visible) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.ang);
 
-    // Draws entity
-    this.draw(ctx, ...args);
+      // Draws entity
+      this.draw(ctx, ...args);
 
-    // Restore
-    ctx.restore();
+      // Restore
+      ctx.restore();
+    }
   }
 
   /**

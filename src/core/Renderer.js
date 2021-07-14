@@ -9,6 +9,7 @@ const { VIRTUAL } = SETTINGS;
  * Renderer abstraction. This object is intended to render things on canvas e handle resize logic.
  */
 class Renderer {
+  filter = "";
   HTMLCanvas = null;
   HTMLCvContainer = null;
   ctx = null;
@@ -21,7 +22,12 @@ class Renderer {
     this.HTMLCanvas = document.getElementById("cv");
     this.HTMLCvContainer = document.querySelector("main");
     this.ctx = this.HTMLCanvas.getContext("2d");
+  }
 
+  /**
+   * Initializes listeners
+   */
+  init() {
     this.screenResize = this.screenResize.bind(this);
     this.screenResize();
     window.addEventListener("resize", this.screenResize);
@@ -33,8 +39,8 @@ class Renderer {
    */
   render(state) {
     if (state.seconds < 10) state.seconds = "0" + state.seconds;
-
     this.clear();
+    this.ctx.filter = this.filter;
 
     // Renders score
     this.ctx.font = `20px 'Press Start 2P'`;
@@ -80,6 +86,14 @@ class Renderer {
     this.HTMLCanvas.height = this.cvH;
 
     this.ratio = this.cvH / VIRTUAL.h;
+  }
+
+  /**
+   * Applies filters in rendering
+   * @param {String} filter
+   */
+  setFilter(filter) {
+    this.filter = filter;
   }
 
   /**

@@ -1,6 +1,7 @@
 import Entity from "./Entities.js";
+import { getDistance, random, randomInt, _2PI } from "../utils/math.js";
+import Particle from "./Particle.js";
 import SETTINGS from "../core/settings.js";
-import { random, randomInt, _2PI } from "../utils/math.js";
 
 const { VIRTUAL } = SETTINGS;
 
@@ -11,28 +12,44 @@ export default class Asteroid extends Entity {
   vr = 0;
   dots = [];
 
-  constructor() {
+  /**
+   * Creates an asteroid with specific size. Its size can vary from 0 (small) to 2 (big)
+   * @param {Number} size
+   * @param {NUmber} x
+   * @param {NUmber} y
+   */
+  constructor(size, x, y) {
     super();
 
-    this.size = randomInt(0, 2); // 2 - big, 1 - medium, - 0 small
+    this.size = size;
     this.radius = 25 * Math.pow(2, this.size);
 
-    this.x = random(0, VIRTUAL.w);
-    this.y = random(0, VIRTUAL.h);
+    this.x = x;
+    this.y = y;
     this.vx = random(-10, 10);
     this.vy = random(-10, 10);
     this.vr = random(10, 60);
+    this.visible = true;
+    this.onRemoveList = false;
 
+    /**
+     * @type Number[]
+     */
     this.dots = ASTEROID_DOT_PATHS["smb".charAt(this.size)][randomInt(0, 2)];
+
+    /**
+     * @type Particle[]
+     */
+    this.particles = [];
   }
 
   /**
-   * Updates asteroid state
-   * @param {Number} dt
+   * Renders asteroid nd possible particles
+   * @param {CanvasRenderingContext2D} ctx
    */
-  update(dt) {
-    this.setAngle(this.ang + dt * this.vr * 0.00005);
-    this.move(dt);
+  render(ctx) {
+    super.render(ctx);
+    this.particles.forEach((p) => p.render(ctx));
   }
 
   /**
@@ -48,21 +65,83 @@ export default class Asteroid extends Entity {
     ctx.closePath();
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-    ctx.beginPath();
-    ctx.arc(0, 0, this.radius, 0, _2PI);
-    ctx.stroke();
+    // ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+    // ctx.beginPath();
+    // ctx.arc(0, 0, this.radius, 0, _2PI);
+    // ctx.stroke();
   }
 
   /**
-   * Handles shot collision
+   * Updates asteroid state
+   * @param {Number} dt
    */
-  shotCollision() {
-    console.log("SHOT");
+  update(dt) {
+    this.setAngle(this.ang + dt * this.vr * 0.00005);
+    this.particles.forEach((p) => p.update(dt));
+    this.move(dt);
+  }
+
+  // /**
+  //  * Kills asteroid. Indeed, it creates the particle animation
+  //  */
+  // die() {
+  //   return new Promise((resolve) => {
+  //     this.visible = false;
+  //     this.alive = false;
+  //     this.particles = Particle.generateSpreadParticles(
+  //       5,
+  //       this.x,
+  //       this.y,
+  //       5,
+  //       1
+  //     );
+
+  //     setTimeout(() => {
+  //       this.particles = [];
+  //       resolve();
+  //     }, 1000);
+  //   });
+  // }
+
+  /**
+   * Generates various asteroids in random positions and velocities. It prevents asteroids in "exclude" position
+   * @param {Number} n
+   * @param {{x: number, y: number} | undefined} exclude
+   * @returns Asteroids[]
+   */
+  static generateAsteroids(n, exclude) {
+    const asteroids = [];
+
+    for (let i = 0; i < n; i++) {
+      const size = randomInt(0, 2);
+      const pos = {
+        x: 0,
+        y: 0,
+      };
+
+      // Exclude generation in a 100 units range
+      if (exclude) {
+        do {
+          pos.x = random(0, VIRTUAL.w);
+          pos.y = random(0, VIRTUAL.h);
+        } while (getDistance(pos, exclude) < 250);
+      }
+      // Creates randomly
+      else {
+        pos.x = random(0, VIRTUAL.w);
+        pos.y = random(0, VIRTUAL.h);
+      }
+
+      asteroids.push(new Asteroid(size, pos.x, pos.y));
+    }
+
+    return asteroids;
   }
 }
 
-// Asteroids paths (always have 6 dots)
+/**
+ * Asteroids paths (always have 6 dots)
+ */
 const ASTEROID_DOT_PATHS = {
   s: [
     // 25 radius

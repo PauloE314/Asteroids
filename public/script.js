@@ -7,6 +7,9 @@ const HTMLPage = document.getElementById("page");
 const HTMLPlayButton = document.getElementById("play");
 const HTMLPltfErrorMessage = document.getElementById("pltf-error");
 const HTMLGmErrorMessage = document.getElementById("gm-error");
+const HTMLGmOverElement = document.getElementById("gm-over");
+const HTMLTryAgainElement = document.getElementById("restart");
+const HTMLHomeElement = document.getElementById("home");
 const platform = getPlatform();
 
 let game;
@@ -22,14 +25,22 @@ else {
     HTMLPage.classList.add("in-game");
     try {
       // Creates game instance
-      game = new Game(platform, HTMLGmErrorMessage);
-      game.onEnd = () => {
-        game = null;
-        // HTMLPage.classList.remove("in-game");
-      };
+      game = new Game(platform, HTMLGmErrorMessage, HTMLGmOverElement);
 
       // Runs application
       game.run();
+
+      // Try again
+      HTMLTryAgainElement.onclick = () => {
+        HTMLGmOverElement.style.display = "none";
+        game.reset();
+      };
+
+      // Home link
+      HTMLHomeElement.onclick = () => {
+        HTMLPage.classList.remove("in-game");
+        game = null;
+      };
 
       // Catches game errors
     } catch (err) {

@@ -7,43 +7,43 @@ import { _2PI, random } from "../utils/math.js";
 const { VIRTUAL } = SETTINGS;
 
 /**
- * Player base class
- *
  * @typedef {[Number, Number, Number, Number]} Command
  */
+
+/**
+ * Player base class
+ * @property {String} shots
+ * @property {Particle[]} particles
+ */
 export default class Player extends Entity {
+  x = VIRTUAL.w / 2;
+  y = VIRTUAL.h / 2;
+  collisionCounter = 0;
+
+  alive = true;
+  visible = true;
+  canMove = true;
+  canShot = true;
+  isMoving = false;
+  shotting = false;
+
   /**
-   * Creates and Player object
+   * @type Particle[]
    */
-  constructor() {
-    super();
+  particles = [];
 
-    this.alive = true;
-    this.visible = true;
-    this.canMove = true;
-    this.canShot = true;
-    this.particles = [];
-
-    this.shots = [];
-    this.shotting = false;
-    this.x = VIRTUAL.w / 2;
-    this.y = VIRTUAL.h / 2;
-    this.isMoving = false;
-    this.collisionCounter = 0;
-
-    this.beforeDestroyAnimation = () => {};
-    this.afterDestroyAnimation = () => {};
-  }
+  /**
+   * @type Particle[]
+   */
+  shots = [];
 
   /**
    * Renders player state and shots
    * @param {CanvasRenderingContext2D} ctx
    */
-  render(ctx, ...args) {
-    // Default rendering
-    super.render(ctx, ...args);
+  render(ctx) {
+    super.render(ctx);
 
-    // Shots rendering
     this.shots.forEach((shot) => shot.render(ctx));
     this.particles.forEach((particle) => particle.render(ctx));
   }
@@ -53,23 +53,21 @@ export default class Player extends Entity {
    * @param {CanvasRenderingContext2D} ctx
    */
   draw(ctx) {
-    if (this.visible) {
-      ctx.beginPath();
-      ctx.moveTo(30, 0);
-      ctx.lineTo(-15, -15);
-      ctx.lineTo(-10, 0);
-      ctx.lineTo(-15, 15);
-      ctx.closePath();
-      ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(30, 0);
+    ctx.lineTo(-15, -15);
+    ctx.lineTo(-10, 0);
+    ctx.lineTo(-15, 15);
+    ctx.closePath();
+    ctx.stroke();
 
-      // Draws "fire"
-      if (this.isMoving) {
-        ctx.beginPath();
-        ctx.moveTo(-13, -10);
-        ctx.lineTo(-25, 0);
-        ctx.lineTo(-13, 10);
-        ctx.stroke();
-      }
+    // Draws "fire"
+    if (this.isMoving) {
+      ctx.beginPath();
+      ctx.moveTo(-13, -10);
+      ctx.lineTo(-25, 0);
+      ctx.lineTo(-13, 10);
+      ctx.stroke();
     }
   }
 
@@ -109,6 +107,7 @@ export default class Player extends Entity {
             Math.sqrt(Math.pow(this.vy, 2) + Math.pow(this.vx, 2)) * 0.9 + 15;
 
           const shot = new Particle(
+            2,
             this.ang,
             this.x + Math.cos(this.ang) * 30,
             this.y + Math.sin(this.ang) * 30,
@@ -129,6 +128,7 @@ export default class Player extends Entity {
 
   /**
    * Sets player's Explosion animation
+   * @returns {Promise<undefined>}
    */
   die() {
     return new Promise((resolve, reject) => {
@@ -137,10 +137,13 @@ export default class Player extends Entity {
       this.canMove = false;
       this.canShot = false;
 
-      this.particles = [];
-      for (let i = 0; i < 10; i++) {
-        this.particles.push(new Particle(random(0, _2PI), this.x, this.y, 10));
-      }
+      this.particles = Particle.generateSpreadParticles(
+        10,
+        this.x,
+        this.y,
+        10,
+        2
+      );
 
       setTimeout(() => {
         this.particles = [];
@@ -153,16 +156,9 @@ export default class Player extends Entity {
    * Player respawn on middle screen
    */
   respawn() {
-    this.x = VIRTUAL.w / 2;
-    this.y = VIRTUAL.h / 2;
-    this.vx = 0;
-    this.vy = 0;
-    this.ang = 0;
-
+    this.reset();
     this.alive = false;
-    this.isMoving = false;
-    this.canMove = true;
-    this.shotting = false;
+    this.canShot = false;
 
     const intervalId = setInterval(() => {
       this.visible = !this.visible;
@@ -180,5 +176,25 @@ export default class Player extends Entity {
     };
 
     setTimeout(resurrect, 2000);
+  }
+
+  /**
+   * Resets initial position and parameters
+   */
+  reset() {
+    this.x = VIRTUAL.w / 2;
+    this.y = VIRTUAL.h / 2;
+    this.vx = 0;
+    this.vy = 0;
+    this.ang = 0;
+    this.collisionCounter = 0;
+    this.alive = true;
+    this.visible = true;
+    this.canMove = true;
+    this.canShot = true;
+    this.isMoving = false;
+    this.shotting = false;
+    this.particles = [];
+    this.shots = [];
   }
 }
