@@ -105,12 +105,15 @@ export default class Player extends Entity {
       if (commands[COMMAND_ENUM.FIRE]) {
         if (!this.shotting) {
           this.shotting = true;
-          const initialX = this.x + Math.cos(this.ang) * 30;
-          const initialY = this.y + Math.sin(this.ang) * 30;
           const speed =
             Math.sqrt(Math.pow(this.vy, 2) + Math.pow(this.vx, 2)) * 0.9 + 15;
 
-          const shot = new Particle(this.ang, initialX, initialY, speed);
+          const shot = new Particle(
+            this.ang,
+            this.x + Math.cos(this.ang) * 30,
+            this.y + Math.sin(this.ang) * 30,
+            speed
+          );
           this.shots.push(shot);
         }
       }
@@ -121,7 +124,6 @@ export default class Player extends Entity {
     this.shots.forEach((shot) => shot.update(dt));
     this.particles.forEach((particle) => {
       particle.update(dt);
-      particle.opacity = Math.max(particle.opacity - 0.04, 0);
     });
   }
 
@@ -137,9 +139,7 @@ export default class Player extends Entity {
 
       this.particles = [];
       for (let i = 0; i < 10; i++) {
-        const particle = new Particle();
-        particle.init(random(0, _2PI), this.x, this.y, 10);
-        this.particles.push(particle);
+        this.particles.push(new Particle(random(0, _2PI), this.x, this.y, 10));
       }
 
       setTimeout(() => {
