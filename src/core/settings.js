@@ -8,10 +8,4 @@ export default {
     w: 700 * 1.618,
   },
   INIt_LIFE_COUNT: 3,
-  ENTITY_TYPES: {
-    DEFAULT: null,
-    PLAYER: 0,
-    ASTEROID: 1,
-    PARTICLE: 2,
-  },
 };

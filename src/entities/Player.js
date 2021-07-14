@@ -2,9 +2,9 @@ import Entity from "./Entities.js";
 import Particle from "./Particle.js";
 import SETTINGS from "../core/settings.js";
 import { COMMAND_ENUM } from "../core/Control.js";
-import { _2PI, randomInt, random } from "../utils/math.js";
+import { _2PI, random } from "../utils/math.js";
 
-const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
+const { VIRTUAL } = SETTINGS;
 
 /**
  * Player base class
@@ -12,8 +12,9 @@ const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
  * @typedef {[Number, Number, Number, Number]} Command
  */
 export default class Player extends Entity {
-  type = ENTITY_TYPES.PLAYER;
-
+  /**
+   * Creates and Player object
+   */
   constructor() {
     super();
 

@@ -1,13 +1,12 @@
 import SETTINGS from "../core/settings.js";
 import { _2PI } from "../utils/math.js";
 
-const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
+const { VIRTUAL } = SETTINGS;
 
 /**
  * Base entity class
  */
 export default class Entity {
-  type = ENTITY_TYPES.DEFAULT;
   x = 0;
   y = 0;
   vx = 0;

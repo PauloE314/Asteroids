@@ -1,8 +1,5 @@
-import SETTINGS from "../core/settings.js";
 import { _2PI } from "../utils/math.js";
 import Entity from "./Entities.js";
-
-const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
 
 export default class Particle extends Entity {
   opacity = 1;
