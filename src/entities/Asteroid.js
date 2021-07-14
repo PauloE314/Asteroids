@@ -12,8 +12,8 @@ export default class Asteroid extends Entity {
   vr = 0;
   dots = [];
 
-  init() {
-    super.init();
+  constructor() {
+    super();
 
     this.size = randomInt(0, 2); // 2 - big, 1 - medium, - 0 small
     this.radius = 25 * Math.pow(2, this.size);

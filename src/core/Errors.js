@@ -14,7 +14,6 @@ export function handleErr(game, htmlErrorElement, message) {
 
   htmlErrorElement.style.display = "block";
   htmlErrorElement.innerHTML = `${message}<br/> Reloading page in 3`;
-  console.log(message);
 
   // Shows error message with regressive counting
   let i = 2;

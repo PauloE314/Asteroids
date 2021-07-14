@@ -14,8 +14,8 @@ const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
 export default class Player extends Entity {
   type = ENTITY_TYPES.PLAYER;
 
-  init() {
-    super.init();
+  constructor() {
+    super();
 
     this.alive = true;
     this.visible = true;
@@ -104,13 +104,12 @@ export default class Player extends Entity {
       if (commands[COMMAND_ENUM.FIRE]) {
         if (!this.shotting) {
           this.shotting = true;
-          const shot = new Particle();
           const initialX = this.x + Math.cos(this.ang) * 30;
           const initialY = this.y + Math.sin(this.ang) * 30;
           const speed =
             Math.sqrt(Math.pow(this.vy, 2) + Math.pow(this.vx, 2)) * 0.9 + 15;
 
-          shot.init(this.ang, initialX, initialY, speed);
+          const shot = new Particle(this.ang, initialX, initialY, speed);
           this.shots.push(shot);
         }
       }

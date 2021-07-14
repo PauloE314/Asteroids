@@ -5,6 +5,9 @@ import Entity from "../entities/Entities.js";
 
 const { VIRTUAL } = SETTINGS;
 
+/**
+ * Renderer abstraction. This object is intended to render things on canvas e handle resize logic.
+ */
 class Renderer {
   HTMLCanvas = null;
   HTMLCvContainer = null;
@@ -14,10 +17,7 @@ class Renderer {
   cvH = 0;
   ratio = 1;
 
-  /**
-   * Loads renderer
-   */
-  init() {
+  constructor() {
     this.HTMLCanvas = document.getElementById("cv");
     this.HTMLCvContainer = document.querySelector("main");
     this.ctx = this.HTMLCanvas.getContext("2d");

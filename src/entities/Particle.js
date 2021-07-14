@@ -5,14 +5,19 @@ import Entity from "./Entities.js";
 const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
 
 export default class Particle extends Entity {
+  opacity = 1;
+
   /**
+   * Creates and particle
    * @param {Number} ang
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} speed
    */
-  init(ang, x, y, speed) {
-    super.init();
+  constructor(ang, x, y, speed) {
+    super();
 
     this.ang = ang;
-    this.opacity = 1;
     this.x = x;
     this.y = y;
     this.vy = Math.sin(ang) * speed;

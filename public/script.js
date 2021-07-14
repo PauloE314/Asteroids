@@ -22,8 +22,7 @@ else {
     HTMLPage.classList.add("in-game");
     try {
       // Creates game instance
-      game = new Game();
-      game.init(platform, HTMLGmErrorMessage);
+      game = new Game(platform, HTMLGmErrorMessage);
       game.onEnd = () => {
         game = null;
         // HTMLPage.classList.remove("in-game");
@@ -34,6 +33,7 @@ else {
 
       // Catches game errors
     } catch (err) {
+      console.log(err);
       HTMLPage.classList.remove("in-game");
       handleErr(game, HTMLGmErrorMessage);
       game = null;

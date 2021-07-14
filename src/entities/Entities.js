@@ -8,20 +8,19 @@ const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
  */
 export default class Entity {
   type = ENTITY_TYPES.DEFAULT;
+  x = 0;
+  y = 0;
+  vx = 0;
+  vy = 0;
+  radius = 30;
+  ang = 0; // Inclination angle
 
   onDie = function () {};
 
   /**
    * Initializes the entity
    */
-  init() {
-    this.x = 0;
-    this.y = 0;
-    this.vx = 0;
-    this.vy = 0;
-    this.radius = 30;
-    this.ang = 0; // Inclination angle
-  }
+  init() {}
 
   /**
    * Renders entity in the canvas screen. It calls directly the entity's "draw" method.

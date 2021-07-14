@@ -27,7 +27,9 @@ export class KeyboardControl extends Control {
   /**
    * Initializes listeners and initial settings
    */
-  init() {
+  constructor() {
+    super();
+
     this.onKeydown = this.onKeydown.bind(this);
     this.onKeyup = this.onKeyup.bind(this);
 

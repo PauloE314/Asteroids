@@ -8,8 +8,6 @@ import { getDistance } from "./utils/math.js";
 const { INIt_LIFE_COUNT, FRM_RATE, VIRTUAL } = SETTINGS;
 
 export default class Game {
-  renderer = new Renderer();
-  controller = new KeyboardControl();
   onEnd = function () {};
 
   /**
@@ -17,27 +15,25 @@ export default class Game {
    * @param {Number} platform
    * @param {HTMLSpanElement} htmlErrorElement
    */
-  init(platform, htmlErrorElement) {
+  constructor(platform, htmlErrorElement) {
     this.platform = platform;
     this.htmlErrorElement = htmlErrorElement;
     this.frameId = null;
 
-    this.renderer.init();
-    this.controller.init();
-
     this.player = new Player();
-    this.player.init();
+    this.renderer = new Renderer();
+    this.controller = new KeyboardControl();
 
     // Asteroids
     this.asteroids = [];
     for (let i = 0; i < 1; i++) {
-      this.asteroids.push(new Asteroid());
-      this.asteroids[i].init();
+      const asteroid = new Asteroid();
+      asteroid.vx = 0;
+      asteroid.vy = 0;
+      asteroid.x = VIRTUAL.w / 2 + 300;
+      asteroid.y = VIRTUAL.h / 2;
 
-      this.asteroids[i].vx = 0;
-      this.asteroids[i].vy = 0;
-      this.asteroids[i].x = VIRTUAL.w / 2 + 300;
-      this.asteroids[i].y = VIRTUAL.h / 2;
+      this.asteroids.push(asteroid);
     }
 
     this.score = 0;
