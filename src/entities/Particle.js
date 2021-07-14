@@ -4,9 +4,7 @@ import Entity from "./Entities.js";
 
 const { VIRTUAL, ENTITY_TYPES } = SETTINGS;
 
-export default class Shot extends Entity {
-  type = ENTITY_TYPES.FIRE;
-
+export default class Particle extends Entity {
   /**
    * @param {Number} ang
    */
@@ -14,12 +12,12 @@ export default class Shot extends Entity {
     super.init();
 
     this.ang = ang;
+    this.opacity = 1;
     this.x = x;
     this.y = y;
     this.vy = Math.sin(ang) * speed;
     this.vx = Math.cos(ang) * speed;
     this.radius = 2;
-    this.state = null; // No need for state logic
   }
 
   /**
@@ -29,12 +27,18 @@ export default class Shot extends Entity {
     this.y += this.vy * dt * 0.015;
     this.x += this.vx * dt * 0.015;
   }
-
   /**
    * @param {CanvasRenderingContext2D} ctx
    */
-  draw(ctx) {
+  render(ctx) {
     ctx.fillStyle = "white";
-    ctx.fillRect(-this.radius, -this.radius, this.radius * 2, this.radius * 2);
+    ctx.globalAlpha = this.opacity;
+    ctx.fillRect(
+      this.x - this.radius,
+      this.y - this.radius,
+      this.radius * 2,
+      this.radius * 2
+    );
+    ctx.globalAlpha = 1;
   }
 }

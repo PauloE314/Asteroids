@@ -41,16 +41,16 @@ export default class Entity {
   }
 
   /**
-   * Updates entity's current state
-   * @param {number} dt
-   */
-  update(dt, ...args) {}
-
-  /**
    * Draws entity
    * @param {CanvasRenderingContext2D} ctx
    */
   draw(ctx, ...args) {}
+
+  /**
+   * Updates entity's current state
+   * @param {number} dt
+   */
+  update(dt, ...args) {}
 
   /**
    * Default entity update, common for all entities

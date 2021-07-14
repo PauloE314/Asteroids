@@ -28,13 +28,6 @@ export default class Game {
     this.player = new Player();
     this.player.init();
 
-    // Handle player collisions
-    this.player.beforeDestroyAnimation = () => this.life_count--;
-    this.player.afterDestroyAnimation = () => {
-      if (this.life_count > 0) this.player.respawn();
-      else this.gameOver();
-    };
-
     // Asteroids
     this.asteroids = [];
     for (let i = 0; i < 1; i++) {
@@ -43,8 +36,8 @@ export default class Game {
 
       this.asteroids[i].vx = 0;
       this.asteroids[i].vy = 0;
-      this.asteroids[i].x = 400;
-      this.asteroids[i].y = 250;
+      this.asteroids[i].x = VIRTUAL.w / 2 + 300;
+      this.asteroids[i].y = VIRTUAL.h / 2;
     }
 
     this.score = 0;
@@ -86,7 +79,6 @@ export default class Game {
       }
     } catch (err) {
       console.log(err);
-      // handleErr(this, this.htmlErrorElement, err.message);
     }
   }
 
@@ -100,14 +92,27 @@ export default class Game {
       const maxPlayerDistance = (this.player.radius + ast.radius) * 0.8;
 
       // Player collision
-      if (playerDistance < maxPlayerDistance)
-        this.player.asteroidCollision(ast);
+      if (playerDistance < maxPlayerDistance) {
+        this.player.collisionCounter = 0;
+
+        // Kills player
+        if (this.player.alive) {
+          this.life_count--;
+
+          this.player.die().then(() => {
+            if (this.life_count > 0) this.player.respawn();
+            else this.gameOver();
+          });
+        }
+      }
 
       // Shots collision
       this.player.shots.forEach((shot) => {
         const shotDistance = getDistance(ast, shot);
 
-        if (shotDistance < ast.radius) ast.shotCollision();
+        if (shotDistance < ast.radius) {
+          ast.shotCollision();
+        }
       });
     });
 
