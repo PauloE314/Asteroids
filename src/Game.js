@@ -9,17 +9,12 @@ const { INITIAL_LIFE_COUNT, FRM_DELAY, VIRTUAL, INITIAL_ASTEROID_AMOUNT } =
   SETTINGS;
 
 export default class Game {
+  onGameOver() {}
+
   /**
-   * Initialize dependencies
-   * @param {Number} platform
-   * @param {HTMLSpanElement} htmlErrorElement
-   * @param {HTMLElement} htmlGameOverElement
-   * @param {HTMLElement} htmlHomeElement
+   * Initialize the game
    */
-  constructor(platform, htmlErrorElement, htmlGameOverElement) {
-    this.platform = platform;
-    this.htmlErrorElement = htmlErrorElement;
-    this.htmlGameOverElement = htmlGameOverElement;
+  constructor() {
     this.frameId = null;
 
     this.player = new Player();
@@ -29,15 +24,18 @@ export default class Game {
     this.renderer.init();
     this.controller.init();
 
-    this.asteroids = Asteroid.generateAsteroids(10, this.player);
+    this.asteroids = Asteroid.generateAsteroids(5, this.player);
 
     this.score = 0;
-    this.life_count = INITIAL_LIFE_COUNT;
+    this.lifeCount = INITIAL_LIFE_COUNT;
     this.time = {
       dt: 0,
       last: 0,
       start: Date.now(),
     };
+
+    // Loads max score
+    this.maxScore = 0;
   }
 
   /**
@@ -59,8 +57,9 @@ export default class Game {
 
         // Renders everything
         this.renderer.render({
-          life_count: this.life_count,
+          lifeCount: this.lifeCount,
           score: this.score,
+          maxScore: this.maxScore,
           seconds: ((Date.now() - this.time.start) / 1000).toFixed(0),
           entities: [this.player, ...this.asteroids],
         });
@@ -77,23 +76,22 @@ export default class Game {
    * Centers the game's main operation logic
    */
   logic() {
-    const asteroids = this.asteroids;
     const player = this.player;
     const shots = this.player.shots;
 
     // Handles 0 asteroid case
-    if (asteroids.length === 0) {
+    if (this.asteroids.length === 0) {
       setTimeout(() => {
         this.player.reset();
         this.asteroids = Asteroid.generateAsteroids(
           INITIAL_ASTEROID_AMOUNT,
           this.player
         );
-      });
+      }, 100);
     }
 
     // Shots collision
-    asteroids.forEach((ast, astIndex) => {
+    this.asteroids.forEach((ast) => {
       if (!ast.alive) return;
 
       // Player collision
@@ -106,17 +104,17 @@ export default class Game {
 
         // Kills player
         if (player.alive) {
-          this.life_count--;
+          this.lifeCount--;
 
           player.die().then(() => {
-            if (this.life_count > 0) player.respawn();
+            if (this.lifeCount > 0) player.respawn();
             else this.gameOver();
           });
         }
       }
 
       // Shots collision
-      shots.forEach((shot, shotIndex) => {
+      shots.forEach((shot) => {
         const shotDistance = getDistance(ast, shot);
 
         // Shot hit asteroid
@@ -124,46 +122,53 @@ export default class Game {
           // Updates score
           this.score += ast.size * 50 + 100;
 
-          setTimeout(() => {
-            // Decreases asteroid size
-            if (ast.size !== 0) {
-              asteroids.push(
-                new Asteroid(ast.size - 1, ast.x, ast.y),
-                new Asteroid(ast.size - 1, ast.x, ast.y)
-              );
-              asteroids.toRemove = true;
-            }
+          // Decreases asteroid size
+          if (ast.size !== 0) {
+            this.asteroids.push(
+              new Asteroid(ast.size - 1, ast.x, ast.y),
+              new Asteroid(ast.size - 1, ast.x, ast.y)
+            );
+          }
 
-            // Destroys
-            asteroids.splice(astIndex, 1);
-          }, 0);
-
-          // Removes shot
-          shots.splice(shotIndex, 1);
+          ast.alive = false;
+          shot.alive = false;
         }
       });
     });
-    console.log(asteroids.length);
 
-    // Handles shots out-of-screen
-    player.shots = shots.filter(
-      (shot) =>
-        shot.x < VIRTUAL.w && shot.x > 0 && shot.y < VIRTUAL.h && shot.y > 0
-    );
+    // Removes asteroids
+    this.asteroids = this.asteroids.filter((ast) => ast.alive);
+
+    // Removes shots
+    player.shots = shots.filter((shot) => {
+      return (
+        shot.alive &&
+        shot.x < VIRTUAL.w &&
+        shot.x > 0 &&
+        shot.y < VIRTUAL.h &&
+        shot.y > 0
+      );
+    });
   }
 
   /**
    * Resets game
    */
   reset() {
+    this.renderer.end();
+    this.controller.end();
+
     this.renderer.init();
     this.controller.init();
 
     this.player.reset();
-    this.asteroids = Asteroid.generateAsteroids(INITIAL_ASTEROID_AMOUNT);
+    this.asteroids = Asteroid.generateAsteroids(
+      INITIAL_ASTEROID_AMOUNT,
+      this.player
+    );
 
     this.score = 0;
-    this.life_count = INITIAL_LIFE_COUNT;
+    this.lifeCount = INITIAL_LIFE_COUNT;
     this.time = {
       dt: 0,
       last: 0,
@@ -178,8 +183,10 @@ export default class Game {
    * Handles zero life count
    */
   gameOver() {
-    this.htmlGameOverElement.style.display = "flex";
-    this.end();
+    const recordBreak = this.maxScore < this.score;
+
+    if (recordBreak) this.maxScore = this.score;
+    this.onGameOver(recordBreak);
   }
 
   /**

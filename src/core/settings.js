@@ -1,5 +1,5 @@
 export default {
-  FRM_DELAY: 0,
+  FRM_DELAY: 50,
   MAX_SPEED: 30,
   PLATFORMS: { desktop: 1, mobile: 2 },
   VIRTUAL: {

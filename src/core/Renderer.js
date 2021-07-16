@@ -9,7 +9,6 @@ const { VIRTUAL } = SETTINGS;
  * Renderer abstraction. This object is intended to render things on canvas e handle resize logic.
  */
 class Renderer {
-  filter = "";
   HTMLCanvas = null;
   HTMLCvContainer = null;
   ctx = null;
@@ -35,19 +34,20 @@ class Renderer {
 
   /**
    * Renders state on canvas
-   * @param {{life_count: Number, score: Number, seconds: Number, entities: Entity[] } state
+   * @param {{lifeCount: Number, score: Number, maxScore: Number, seconds: Number, entities: Entity[] } state
    */
   render(state) {
     if (state.seconds < 10) state.seconds = "0" + state.seconds;
+
+    // Clears screen
     this.clear();
-    this.ctx.filter = this.filter;
 
     // Renders score
     this.ctx.font = `20px 'Press Start 2P'`;
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "end";
     this.ctx.fillText(
-      `LIFE: ${state.life_count}   SCORE: ${state.score}   TIME: ${state.seconds}`,
+      `LIFE: ${state.lifeCount}   SCORE: ${state.score}   MAX SCORE: ${state.maxScore}   TIME: ${state.seconds}`,
       this.cvW - 20,
       40
     );

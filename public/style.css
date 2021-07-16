@@ -63,7 +63,6 @@ main {
   flex: 1;
   width: 100vw;
 }
-
 #play {
   font-size: 2rem;
   margin-top: 3rem;
@@ -118,9 +117,15 @@ main {
   font-weight: bold;
   background-color: white;
 }
-#gm-over span {
+#gm-over span,
+#gm-over small {
   font-family: var(--retro-strong-font);
   text-align: center;
+  line-height: 1.4rem;
+  margin-bottom: 2rem;
+}
+#gm-over small {
+  font-size: 1rem;
 }
 #gm-over button {
   width: 100%;

@@ -21,6 +21,7 @@ export default class Particle extends Entity {
     this.vx = Math.cos(ang) * speed;
     this.radius = radius;
     this.opacity = opacity;
+    this.onRemoveList = false;
   }
 
   /**

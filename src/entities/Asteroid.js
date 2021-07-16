@@ -30,7 +30,6 @@ export default class Asteroid extends Entity {
     this.vy = random(-10, 10);
     this.vr = random(10, 60);
     this.visible = true;
-    this.onRemoveList = false;
 
     /**
      * @type Number[]
@@ -64,11 +63,6 @@ export default class Asteroid extends Entity {
     for (let i = 1; i < 7; i++) ctx.lineTo(this.dots[i][0], this.dots[i][1]);
     ctx.closePath();
     ctx.stroke();
-
-    // ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-    // ctx.beginPath();
-    // ctx.arc(0, 0, this.radius, 0, _2PI);
-    // ctx.stroke();
   }
 
   /**
@@ -81,35 +75,13 @@ export default class Asteroid extends Entity {
     this.move(dt);
   }
 
-  // /**
-  //  * Kills asteroid. Indeed, it creates the particle animation
-  //  */
-  // die() {
-  //   return new Promise((resolve) => {
-  //     this.visible = false;
-  //     this.alive = false;
-  //     this.particles = Particle.generateSpreadParticles(
-  //       5,
-  //       this.x,
-  //       this.y,
-  //       5,
-  //       1
-  //     );
-
-  //     setTimeout(() => {
-  //       this.particles = [];
-  //       resolve();
-  //     }, 1000);
-  //   });
-  // }
-
   /**
-   * Generates various asteroids in random positions and velocities. It prevents asteroids in "exclude" position
+   * Generates various asteroids in random positions and velocities. It prevents asteroids in "playerPosition" position
    * @param {Number} n
-   * @param {{x: number, y: number} | undefined} exclude
+   * @param {{x: number, y: number}} playerPosition
    * @returns Asteroids[]
    */
-  static generateAsteroids(n, exclude) {
+  static generateAsteroids(n, playerPosition) {
     const asteroids = [];
 
     for (let i = 0; i < n; i++) {
@@ -119,18 +91,11 @@ export default class Asteroid extends Entity {
         y: 0,
       };
 
-      // Exclude generation in a 100 units range
-      if (exclude) {
-        do {
-          pos.x = random(0, VIRTUAL.w);
-          pos.y = random(0, VIRTUAL.h);
-        } while (getDistance(pos, exclude) < 250);
-      }
-      // Creates randomly
-      else {
+      // Exclude generation in playerPosition in a 100 units range
+      do {
         pos.x = random(0, VIRTUAL.w);
         pos.y = random(0, VIRTUAL.h);
-      }
+      } while (getDistance(pos, playerPosition) < 250);
 
       asteroids.push(new Asteroid(size, pos.x, pos.y));
     }

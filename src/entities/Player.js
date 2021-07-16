@@ -88,8 +88,8 @@ export default class Player extends Entity {
       else this.isMoving = false;
 
       // Speed
-      const nextVY = this.vy + Math.sin(this.ang) * this.isMoving;
-      const nextVX = this.vx + Math.cos(this.ang) * this.isMoving;
+      const nextVY = this.vy + Math.sin(this.ang) * this.isMoving * dt * 0.06;
+      const nextVX = this.vx + Math.cos(this.ang) * this.isMoving * dt * 0.06;
 
       if (Math.abs(nextVY) <= SETTINGS.MAX_SPEED) this.vy = nextVY;
       if (Math.abs(nextVX) <= SETTINGS.MAX_SPEED) this.vx = nextVX;
