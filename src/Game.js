@@ -24,7 +24,7 @@ export default class Game {
     this.renderer.init();
     this.controller.init();
 
-    this.asteroids = Asteroid.generateAsteroids(5, this.player);
+    this.asteroids = Asteroid.generateAsteroids(1, this.player);
 
     this.score = 0;
     this.lifeCount = INITIAL_LIFE_COUNT;
@@ -81,19 +81,19 @@ export default class Game {
 
     // Handles 0 asteroid case
     if (this.asteroids.length === 0) {
-      setTimeout(() => {
-        this.player.reset();
-        this.asteroids = Asteroid.generateAsteroids(
-          INITIAL_ASTEROID_AMOUNT,
-          this.player
-        );
-      }, 100);
+      const playerAngle = this.player.ang;
+
+      this.player.reset();
+      this.player.ang = playerAngle;
+
+      this.asteroids = Asteroid.generateAsteroids(
+        INITIAL_ASTEROID_AMOUNT,
+        this.player
+      );
     }
 
     // Shots collision
     this.asteroids.forEach((ast) => {
-      if (!ast.alive) return;
-
       // Player collision
       const playerDistance = getDistance(ast, player);
       const maxPlayerDistance = (player.radius + ast.radius) * 0.8;
