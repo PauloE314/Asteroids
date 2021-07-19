@@ -85,7 +85,7 @@ export default class Asteroid extends Entity {
     const asteroids = [];
 
     for (let i = 0; i < n; i++) {
-      const size = 0;
+      const size = randomInt(0, 2);
       const pos = {
         x: 0,
         y: 0,

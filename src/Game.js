@@ -3,7 +3,7 @@ import Renderer from "./core/Renderer.js";
 import { KeyboardControl } from "./core/Control.js";
 import Asteroid from "./entities/Asteroid.js";
 import Player from "./entities/Player.js";
-import { getDistance, randomInt } from "./utils/math.js";
+import { getDistance } from "./utils/math.js";
 
 const { INITIAL_LIFE_COUNT, FRM_DELAY, VIRTUAL, INITIAL_ASTEROID_AMOUNT } =
   SETTINGS;
