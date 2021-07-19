@@ -1,7 +1,7 @@
-import Game from "../src/Game.js";
-import SETTINGS from "../src/core/settings.js";
-import { handleErr } from "../src/core/errors.js";
-import { getPlatform } from "../src/utils/index.js";
+import Game from "./Game.js";
+import SETTINGS from "./core/settings.js";
+import { handleErr } from "./core/Errors.js";
+import { getPlatform } from "./utils/index.js";
 
 const HTMLPage = document.getElementById("page");
 const HTMLPlayButton = document.getElementById("play");
@@ -67,6 +67,4 @@ if (canPlay) {
       console.log(err);
     }
   };
-
-  HTMLPlayButton.click();
 }

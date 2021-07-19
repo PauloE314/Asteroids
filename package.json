@@ -1,0 +1,30 @@
+{
+  "name": "Asteroids",
+  "version": "1.0.0",
+  "description": "Recriação do famoso jogo Asteroids (1975) para a WEB. Atualmente se encontra em processo de desenvolvimento.",
+  "main": "./src/index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-loader": "^8.2.2",
+    "webpack": "^5.45.1",
+    "webpack-cli": "^4.7.2"
+  },
+  "scripts": {
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PauloE314/Asteroids.git"
+  },
+  "keywords": [
+    "asteroids",
+    "javascript",
+    "games"
+  ],
+  "author": "Paulo Eduardo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PauloE314/Asteroids/issues"
+  },
+  "homepage": "https://github.com/PauloE314/Asteroids#README.md"
+}

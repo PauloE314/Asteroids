@@ -24,7 +24,10 @@ export default class Game {
     this.renderer.init();
     this.controller.init();
 
-    this.asteroids = Asteroid.generateAsteroids(1, this.player);
+    this.asteroids = Asteroid.generateAsteroids(
+      INITIAL_ASTEROID_AMOUNT,
+      this.player
+    );
 
     this.score = 0;
     this.lifeCount = INITIAL_LIFE_COUNT;

@@ -23,7 +23,19 @@ Recriação do famoso jogo Asteroids (1975) para a WEB. Atualmente se encontra e
 Para executar a aplicação localmente, basta primeiramente realizar o clone deste repositório:
 
 ```bash
-$ git clone https://github.com/PauloE314/Asteroids .
+git clone https://github.com/PauloE314/Asteroids .
 ```
 
 Depois basta abrir o arquivo `public/index.html` (relativo à raiz do projeto) em algum navegador atualizado.
+
+Para realozar alteração no código fonte, é necessário realizar a instalação das dependências:
+
+```bash
+npm install
+```
+
+Agora, basta realizar o build do projeto:
+
+```bash
+npm build
+```
